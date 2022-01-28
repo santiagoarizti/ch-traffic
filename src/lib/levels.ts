@@ -1,7 +1,11 @@
 import {Car, CarCode, isCarCode} from './cars';
 
 /** valid moves to solve a puzzle, e.g. FU3, QD1, XR5 */
-type Move = `${CarCode}${'U'|'D'|'R'|'L'}${1|2|3|4|5|6}`;
+export type Move = `${CarCode}${'U'|'D'|'R'|'L'}${1|2|3|4|5|6}`;
+
+export function isValidMove(move: string): move is Move {
+    return /^.[UDRL][1-6]$/.test(move) && isCarCode(move[0]);
+}
 
 export interface RawLevel {
     /** unique for programatic purposes */
@@ -31,7 +35,7 @@ export interface RawLevel {
     solution?: Move[],
 }
 
-interface CarPosition {
+export interface CarPosition {
     /** which car was detected */
     car: CarCode,
     /** true when horizontal, false when vertical */
@@ -139,6 +143,9 @@ export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
     if (exit) {
         const exitCar = posMap.get(exit[1]);
         if (exitCar) {
+            if (!exitCar.horizontal) {
+                throw new Error(`exit car '${exit[1]}' is not horizontal`);
+            }
             if (exit[0] !== exitCar.origin[1]) {
                 throw new Error(`exit car '${exit[1]}' is not in the correct line`);
             }

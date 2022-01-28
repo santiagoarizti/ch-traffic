@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { Car, cars } from "../cars";
-import { parseRawLevelBody } from "../levels";
+import { parseRawLevelBody, isValidMove } from "../levels";
 
 const carA: Car = {
     id: 13,
@@ -115,5 +115,37 @@ describe('function parseRawLevelBody', () => {
     it('detects a corrupt file, exit car not in correct line', () => {
         const body = 'A A\n- - >A';
         expect(() => parseRawLevelBody(body, [carA])).toThrowError(`exit car 'A' is not in the correct line`);
+    });
+    it('detects a corrupt file, exit car not horizontal', () => {
+        const body = 'A -\nA - >A';
+        expect(() => parseRawLevelBody(body, [carA])).toThrowError(`exit car 'A' is not horizontal`);
+    });
+});
+
+describe('isValidMove function', () => {
+    it('finds a valid move', () => {
+        const move = 'AU1';
+        const valid = isValidMove(move);
+        expect(valid).toBeTruthy();
+    });
+    it('finds a valid move 2', () => {
+        const move = 'FD6';
+        const valid = isValidMove(move);
+        expect(valid).toBeTruthy();
+    });
+    it('finds an invalid move', () => {
+        const move = 'XXX';
+        const valid = isValidMove(move);
+        expect(valid).toBeFalsy();
+    });
+    it('finds an invalid move', () => {
+        const move = 'XU7';
+        const valid = isValidMove(move);
+        expect(valid).toBeFalsy();
+    });
+    it('finds an invalid move', () => {
+        const move = '.U1';
+        const valid = isValidMove(move);
+        expect(valid).toBeFalsy();
     });
 });
