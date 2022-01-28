@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Car, cars } from "../cars";
+import { Car } from "../cars";
 import { parseRawLevelBody, isValidMove } from "../levels";
 
 const carA: Car = {
@@ -25,6 +25,43 @@ const truck: Car = {
     color: 'blue',
     size: 3,
 };
+
+const cars: Car[] = [
+    carA,
+    mq,
+    truck,
+    {
+        id: 0,
+        code: 'O',
+        name: 'yellow truck',
+        color: 'gold',
+        size: 3,
+    }, {
+        id: 2,
+        code: 'R',
+        name: 'green truck',
+        color: 'aquamarine',
+        size: 3,
+    }, {
+        id: 3,
+        code: 'P',
+        name: 'purple truck',
+        color: 'violet',
+        size: 3,
+    }, {
+        id: 11,
+        code: 'C',
+        name: 'cyan car',
+        color: 'turquoise',
+        size: 2,
+    }, {
+        id: 15,
+        code: 'B',
+        name: 'orange car',
+        color: 'orange',
+        size: 2,
+    }
+];
 
 describe('function parseRawLevelBody', () => {
     it('parses a simple level size 1', () => {

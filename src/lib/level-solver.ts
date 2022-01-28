@@ -1,4 +1,4 @@
-import { CarCode } from "./cars";
+import { Car, CarCode } from "./cars";
 import { CarPosition, Move, ParsedLevel } from "./levels";
 
 export interface LevelSnapshot {
@@ -54,12 +54,93 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
 }
 
 /**
+ * based on a car size and a car position, get top left corner and bottom right
+ */
+function getBoundingBox(
+    car: Car,
+    pos: CarPosition
+): [
+    tlx: number,
+    tly: number,
+    brx: number,
+    bry: number
+] {
+    return [
+        pos.origin[0],
+        pos.origin[1],
+        pos.origin[0] + (pos.horizontal ? car.size - 1 : 0),
+        pos.origin[1] + (pos.horizontal ? 0 : car.size - 1),
+    ];
+}
+
+/** when a state is invalid, you can find out why by peeking here. */
+interface StateError {
+    car: CarCode,
+    errors: string[],
+}
+
+/**
  * return true when the current board is in a valid state
  * this means that the cars are not colliding with other cars or with the
  * bounds of the level
  */
-export function isStateValid(level: ParsedLevel, state: LevelSnapshot): boolean {
-    return true; // todo:
+export function findStateErrors(
+    level: ParsedLevel,
+    state: LevelSnapshot,
+    cars: Car[]
+): StateError[] {
+    // perhaps we could explain what went wrong.
+    let errors: StateError[] = [];
+
+    // check cars 1:1 and add them to the "safe" box until one collides.
+    for (let i = 0; i < state.carsPositions.length; i++) {
+        const pos = state.carsPositions[i];
+
+        // lets separate errors by car now
+        let carErrors: string[] = [];
+
+        // first get this car from the catalog so we can know its info
+        const car = cars.find(car => car.code === pos.car);
+        if (!car) {
+            // this is not a car position issue, but a configuration error
+            throw new Error(`car '${pos.car}'s info not provided`);
+        }
+
+        // we will be using this a lot, make a short alias
+        const [x1, y1, x2, y2] = getBoundingBox(car, pos);
+
+        // first see if it collides with the level itself.
+        if (x1 < 0 || x2 >= level.size[0] || y1 < 0 || y2 >= level.size[1]) {
+            if ( // out of bounds, check if he is not about to win
+                !level.exit || // if level has no exit...
+                level.exit[1] !== pos.car || // if exit car is not this
+                level.exit[0] !== y1 || // if exit car is in wrog line
+                x1 < 0 // if exit car exited from wrong side
+            ) { // ...not winning
+                carErrors.push(`car '${pos.car}' is out of bounds`);
+            }
+        }
+
+        // now lets compare against all other cars.
+        for (let j = 0; j < i; j++) {
+            const prev = state.carsPositions[j];
+            // we will be using this a lot, make a short alias
+            const [px1, py1, px2, py2] = getBoundingBox(car, prev);
+
+            if ( // see how I compare 1 vs 2 and 2 vs 1, that is how to collide.
+                x1 <= px2 && x2 >= px1 && // overlapping x coordenates
+                y1 <= py2 && y2 >= py1 // overlapping y coordenates
+            ) {
+                carErrors.push(`car '${pos.car}' would collide with car '${prev.car}'`);
+            }
+        }
+
+        if (carErrors.length > 0) {
+            errors.push({car: pos.car, errors: carErrors});
+        }
+    }
+
+    return errors;
 }
 
 /** return true when level is in a win condition */
