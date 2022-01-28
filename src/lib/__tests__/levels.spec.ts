@@ -1,29 +1,54 @@
 import { describe, expect, it } from "vitest";
+import { Car, cars } from "../cars";
 import { parseRawLevelBody } from "../levels";
+
+const carA: Car = {
+    id: 13,
+    code: 'A',
+    name: 'lemon car',
+    color: 'lightgreen',
+    size: 2,
+};
+
+const mq: Car = {
+    id: 9,
+    code: 'X',
+    name: 'mcqueen',
+    color: 'red',
+    size: 2,
+};
+
+const truck: Car = {
+    id: 1,
+    code: 'Q',
+    name: 'blue truck',
+    color: 'blue',
+    size: 3,
+};
 
 describe('function parseRawLevelBody', () => {
     it('parses a simple level size 1', () => {
         const body = `
           - -
           - -`;
-        const parsed = parseRawLevelBody(body);
+        const parsed = parseRawLevelBody(body, []);
         expect(parsed.size).toEqual([2, 2]);
     });
     it('parses a simple level size 2', () => {
         const body = '- - -\n- - -';
-        const parsed = parseRawLevelBody(body);
+        const parsed = parseRawLevelBody(body, []);
         expect(parsed.size).toEqual([3, 2]);
     });
 
     it('finds the exit 1', () => {
-        const body = '-->F';
-        const parsed = parseRawLevelBody(body);
-        expect(parsed.exit).toEqual([0, 'F']);
+        const body = 'A A >A';
+        const parsed = parseRawLevelBody(body, [carA]);
+        expect(parsed.exit).toEqual([0, 'A']);
     });
 
     it('finds the exit 2', () => {
-        const body = '--\n--\n--';
-        const parsed = parseRawLevelBody(body);
+        const body = '--\n--\nXX';
+        const parsed = parseRawLevelBody(body, [mq]);
         expect(parsed.exit).toEqual([2, 'X']);
     });
 
@@ -31,28 +56,28 @@ describe('function parseRawLevelBody', () => {
         const body = `
           X X
           - -`;
-        const parsed = parseRawLevelBody(body);
+        const parsed = parseRawLevelBody(body, [mq]);
         expect(parsed.carsPositions).toContainEqual({car: 'X', horizontal: true, origin: [0, 0]});
     });
 
     it('finds car X and F', () => {
         const body = `
-          - - F
-          X X F`;
-        const parsed = parseRawLevelBody(body);
+          - - A
+          X X A`;
+        const parsed = parseRawLevelBody(body, [mq, carA]);
         expect(parsed.carsPositions).toContainEqual({car: 'X', horizontal: true, origin: [0, 1]});
-        expect(parsed.carsPositions).toContainEqual({car: 'F', horizontal: false, origin: [2, 0]});
+        expect(parsed.carsPositions).toContainEqual({car: 'A', horizontal: false, origin: [2, 0]});
     });
 
     it('finds all cars and exit in complex level', () => {
         const body = `
-          A A - - - O
+          A A - - - O >A
           P - - Q - O
           P X X Q - O
-          P - - Q - - >Q
+          P - - Q - -
           B - - - C C
           B - R R R -`;
-        const parsed = parseRawLevelBody(body);
+        const parsed = parseRawLevelBody(body, cars);
         expect(parsed.carsPositions).toContainEqual({car: 'A', horizontal: true, origin: [0, 0]});
         expect(parsed.carsPositions).toContainEqual({car: 'P', horizontal: false, origin: [0, 1]});
         expect(parsed.carsPositions).toContainEqual({car: 'B', horizontal: false, origin: [0, 4]});
@@ -61,7 +86,34 @@ describe('function parseRawLevelBody', () => {
         expect(parsed.carsPositions).toContainEqual({car: 'R', horizontal: true, origin: [2, 5]});
         expect(parsed.carsPositions).toContainEqual({car: 'O', horizontal: false, origin: [5, 0]});
         expect(parsed.carsPositions).toContainEqual({car: 'C', horizontal: true, origin: [4, 4]});
-        expect(parsed.exit).toEqual([3, 'Q']);
+        expect(parsed.exit).toEqual([0, 'A']);
         expect(parsed.size).toEqual([6, 6]);
+    });
+
+    // fail expectations:
+
+    it('detects a corrupt file, incomplete car', () => {
+        const body = 'A -\n- -';
+        expect(() => parseRawLevelBody(body, [carA])).toThrowError(`car 'A' is incomplete`);
+    });
+    it('detects a corrupt file, unexpected characters in body', () => {
+        const body = '- .\n- -';
+        expect(() => parseRawLevelBody(body, [])).toThrowError(`unexpected char '.' found in body`);
+    });
+    it('detects a corrupt file, duplicated car', () => {
+        const body = 'A A -\n- - A\n- - A';
+        expect(() => parseRawLevelBody(body, [carA])).toThrowError(`car 'A' is duplicated`);
+    });
+    it('detects a corrupt file, duplicated car 2', () => {
+        const body = 'A A\nA A';
+        expect(() => parseRawLevelBody(body, [carA])).toThrowError(`car 'A' is duplicated`);
+    });
+    it('detects a corrupt file, exit car not found in cars', () => {
+        const body = '- - >A';
+        expect(() => parseRawLevelBody(body, [carA])).toThrowError(`car 'A' expected as exit, but not found in cars`);
+    });
+    it('detects a corrupt file, exit car not in correct line', () => {
+        const body = 'A A\n- - >A';
+        expect(() => parseRawLevelBody(body, [carA])).toThrowError(`exit car 'A' is not in the correct line`);
     });
 });

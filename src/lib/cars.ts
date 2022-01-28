@@ -1,17 +1,19 @@
+export type CarCode = 'O'|'Q'|'R'|'P'|'K'|'D'|'F'|'G'|'E'|'X'|'H'|'C'|'I'|'A'|'J'|'B';
+
 export interface Car {
     /** id from 1-15 */
     id: number,
     /** the code that appears in the cards. */
-    code: 'O'|'Q'|'R'|'P'|'K'|'D'|'F'|'G'|'E'|'X'|'H'|'C'|'I'|'A'|'J'|'B',
+    code: CarCode,
     /** how the car looks? give a nice name */
     name: string,
     /** css color */
     color: string,
     /** normal size is 2, large is 3 */
-    large: boolean,
+    size: number,
 }
 
-export function isCarCode(code: string): code is Car['code'] {
+export function isCarCode(code: string): code is CarCode {
     return /[OQRPKDFGEXHCIAJB]/.test(code);
 }
 
@@ -20,95 +22,95 @@ export const cars: Car[] = [{
     code: 'O',
     name: 'yellow truck',
     color: 'gold',
-    large: true,
+    size: 3,
 }, {
     id: 1,
     code: 'Q',
     name: 'blue truck',
     color: 'blue',
-    large: true,
+    size: 3,
 }, {
     id: 2,
     code: 'R',
     name: 'green truck',
     color: 'aquamarine',
-    large: true,
+    size: 3,
 }, {
     id: 3,
     code: 'P',
     name: 'purple truck',
     color: 'violet',
-    large: true,
+    size: 3,
 }, {
     id: 4,
     code: 'K',
     name: 'army car',
     color: 'olive',
-    large: false,
+    size: 2,
 }, {
     id: 5,
     code: 'D',
     name: 'pink car',
     color: 'pink',
-    large: false,
+    size: 2,
 }, {
     id: 6,
     code: 'F',
     name: 'green car',
     color: 'seagreen',
-    large: false,
+    size: 2,
 }, {
     id: 7,
     code: 'G',
     name: 'black car',
     color: 'darkslategrey',
-    large: false,
+    size: 2,
 }, {
     id: 8,
     code: 'E',
     name: 'purple car',
     color: 'rebeccapurple',
-    large: false,
+    size: 2,
 }, {
     id: 9,
     code: 'X',
     name: 'mcqueen',
     color: 'red',
-    large: false,
+    size: 2,
 }, {
     id: 10,
     code: 'H',
     name: 'beige car',
     color: 'wheat',
-    large: false,
+    size: 2,
 }, {
     id: 11,
     code: 'C',
     name: 'cyan car',
     color: 'turquoise',
-    large: false,
+    size: 2,
 }, {
     id: 12,
     code: 'I',
     name: 'yellow car',
     color: 'palegoldenrod',
-    large: false,
+    size: 2,
 }, {
     id: 13,
     code: 'A',
     name: 'lemon car',
     color: 'lightgreen',
-    large: false,
+    size: 2,
 }, {
     id: 14,
     code: 'J',
     name: 'brown car',
     color: 'brown',
-    large: false,
+    size: 2,
 }, {
     id: 15,
     code: 'B',
     name: 'orange car',
     color: 'orange',
-    large: false,
+    size: 2,
 }];

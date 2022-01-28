@@ -1,7 +1,7 @@
-import {Car, isCarCode} from './cars';
+import {Car, CarCode, isCarCode} from './cars';
 
 /** valid moves to solve a puzzle, e.g. FU3, QD1, XR5 */
-type Move = `${Car['code']}${'U'|'D'|'R'|'L'}${1|2|3|4|5}`;
+type Move = `${CarCode}${'U'|'D'|'R'|'L'}${1|2|3|4|5|6}`;
 
 export interface RawLevel {
     /** unique for programatic purposes */
@@ -33,7 +33,7 @@ export interface RawLevel {
 
 interface CarPosition {
     /** which car was detected */
-    car: Car['code'],
+    car: CarCode,
     /** true when horizontal, false when vertical */
     horizontal: boolean,
     /** position where this car't top-left corner should be placed. */
@@ -46,17 +46,18 @@ export interface ParsedLevel {
     /** result from parseRawLevelBody */
     carsPositions: CarPosition[],
     /** row number in which the exit is located and the code of the car that must exit. */
-    exit: [number, Car['code']],
+    exit?: [number, CarCode],
 }
 
-export function parseRawLevelBody(body: string): ParsedLevel {
+export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
+
     // easier to work with a clean string, no spaces and empty lines.
     const cleanBody = body.replaceAll(' ', '').replaceAll('\r', '').trim();
     // should have only the level lines, no padding, no gutters.
     const lines = cleanBody.split('\n');
 
     // get the exit line first. this default value is the standard one.
-    let exit: ParsedLevel['exit'] = [2, 'X'];
+    let exit: ParsedLevel['exit'];
     const exitLine = lines.findIndex(l => l.indexOf('>') > 0);
     if (exitLine >= 0) {
         const match = lines[exitLine].match(/>(\w)/);
@@ -68,34 +69,87 @@ export function parseRawLevelBody(body: string): ParsedLevel {
         lines[exitLine] = lines[exitLine].replace(/>.*$/, '').trim();
     }
 
-    //const carsMap: {[code in Car['code']]: CarPosition} = {};
-    const carsMap = new Map<Car['code'], CarPosition>();
+    // detected size of level, simply count lines and max length of lines to find size.
+    const levelSize: [number, number] = [lines.reduce((max, l) => Math.max(max, l.length), 0), lines.length];
+
+    /** cars ready to be responded. */
+    const posMap = new Map<CarCode, CarPosition>();
 
     // now the grid only contains useful information for finding the size.
     for (let l = 0; l < lines.length; l++) {
         for (let i = 0; i < lines[l].length; i++) {
-            const c = lines[l][i];
-            if (isCarCode(c)) {
-                const car = carsMap.get(c);
-                if (car) {
-                    if (car.origin[0] === i - 1) {
-                        // means necessarily that car is horizontal
-                        car.horizontal = true;
+            if (lines[l][i] === '-') {
+                continue; // separator character, ignore
+            }
+
+            const car = cars.find(car => car.code === lines[l][i]);
+
+            if (!car) {
+                throw new Error(`unexpected char '${lines[l][i]}' found in body`);
+            }
+
+            // helper array to find cars more easily
+            const len = Array(car.size).fill(0).map((_, i) => i);
+
+            const pos = posMap.get(car.code);
+            if (pos) {
+                // means we already had found this car, we could be simply in another part of the same car (likely),
+                // or we could have a duplicated car (unlikely, but could happen in a broken file).
+                // we only need to check if we are in the bounds of the originally found car
+                // otherwise we have a duplicate.
+                if (pos.horizontal) {
+                    if (l !== pos.origin[1] || i < pos.origin[0] || i > pos.origin[0] + car.size) {
+                        throw new Error(`car '${car.code}' is duplicated`);
                     }
                 } else {
-                    carsMap.set(c, {
-                        car: c,
-                        horizontal: false, // default false, easier this way.
-                        origin: [i, l],
-                    });
+                    if (i !== pos.origin[0] || l < pos.origin[1] || l > pos.origin[1] + car.size) {
+                        throw new Error(`car '${car.code}' is duplicated`);
+                    }
                 }
+            } else {
+                // first time seeing this car, lets just make sure it is complete and find if it is horizontal
+                // or vertical.
+                let horizontal: boolean;
+                if (len.every(d => lines[l][i + d] === car.code)) {
+                    horizontal = true;
+                } else if(len.every(d => lines[l + d][i] === car.code)) {
+                    horizontal = false;
+                } else {
+                    throw new Error(`car '${car.code}' is incomplete`);
+                }
+
+                posMap.set(car.code, {
+                    car: car.code,
+                    horizontal,
+                    origin: [i, l], // our coordenates must be the origin, because we are at "else" block.
+                });
             }
         }
     }
 
+    // assign default exit car if found in the cars in the map
+    if (!exit) {
+        const dc = posMap.get('X'); // default car
+        if (dc) {
+            exit = [dc.origin[1], dc.car];
+        }
+    }
+
+    // make sure exit is correctly configured (car found and car in correct line)
+    if (exit) {
+        const exitCar = posMap.get(exit[1]);
+        if (exitCar) {
+            if (exit[0] !== exitCar.origin[1]) {
+                throw new Error(`exit car '${exit[1]}' is not in the correct line`);
+            }
+        } else {
+            throw new Error(`car '${exit[1]}' expected as exit, but not found in cars`);
+        }
+    }
+
     return {
-        size: [lines.reduce((max, l) => Math.max(max, l.length), 0), lines.length],
-        carsPositions: [...carsMap.values()],
+        size: levelSize,
+        carsPositions: [...posMap.values()],
         exit,
     };
 }
