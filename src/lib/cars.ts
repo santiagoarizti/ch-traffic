@@ -11,6 +11,10 @@ export interface Car {
     large: boolean,
 }
 
+export function isCarCode(code: string): code is Car['code'] {
+    return /[OQRPKDFGEXHCIAJB]/.test(code);
+}
+
 export const cars: Car[] = [{
     id: 0,
     code: 'O',
