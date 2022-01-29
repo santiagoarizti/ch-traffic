@@ -1,22 +1,18 @@
 <script setup lang="ts">
-import {computed, toRefs} from 'vue';
 import TrafficGrid from '@/components/TrafficGrid.vue';
-import { useGameSettingsStore } from '@/stores/gameSettings';
-
-
-const store = useGameSettingsStore();
-
-const {size} = toRefs(store);
 
 </script>
 
 <template>
 <div>
     <h2>Game</h2>
-    size: (
-        <input type="number" v-model="size[0]">,
-        <input type="number" v-model="size[1]">
-    )
+
+    <label>
+        Level select:
+        <select>
+
+        </select>
+    </label>
 
     <div class="grid-container">
         <TrafficGrid />

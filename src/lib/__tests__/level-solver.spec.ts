@@ -60,8 +60,8 @@ describe('function applyMove', () => {
         const move: Move = 'XR1';
         const newState = applyMove(state, move);
         expect(newState.history.at(-1)).toEqual(move);
-        const myPos = newState.carsPositions.find(p => p.car === 'X')!;
-        expect(myPos.origin).toEqual([3, 2]);
+        const myPos = newState.carsPositions.find(p => p.car === 'X');
+        expect(myPos?.origin).toEqual([3, 2]);
     });
 
     it('fails on invalid move, incorrect direction', () => {
@@ -90,13 +90,6 @@ describe('findStateErrors function', () => {
         name: 'mcqueen',
         color: 'red',
         size: 2,
-    };
-    const truck: Car = {
-        id: 1,
-        code: 'Q',
-        name: 'blue truck',
-        color: 'blue',
-        size: 3,
     };
     beforeEach(() => {
         level = {

@@ -1,11 +1,20 @@
 import { Car, CarCode } from "./cars";
 import { CarPosition, Move, ParsedLevel } from "./levels";
 
+
+/** when a state is invalid, you can find out why by peeking here. */
+interface StateError {
+    car: CarCode,
+    errors: string[],
+}
+
 export interface LevelSnapshot {
     /** result from parseRawLevelBody */
     carsPositions: CarPosition[],
     /** all moves that have been made so far */
     history: Move[],
+    /** if cars are in invalid positions the errors would appear here */
+    errors?: StateError[],
 }
 
 // translate moves such as U1 (up one) or R3 (right 3) to vector.
@@ -73,12 +82,6 @@ function getBoundingBox(
     ];
 }
 
-/** when a state is invalid, you can find out why by peeking here. */
-interface StateError {
-    car: CarCode,
-    errors: string[],
-}
-
 /**
  * return true when the current board is in a valid state
  * this means that the cars are not colliding with other cars or with the
@@ -90,14 +93,14 @@ export function findStateErrors(
     cars: Car[]
 ): StateError[] {
     // perhaps we could explain what went wrong.
-    let errors: StateError[] = [];
+    const errors: StateError[] = [];
 
     // check cars 1:1 and add them to the "safe" box until one collides.
     for (let i = 0; i < state.carsPositions.length; i++) {
         const pos = state.carsPositions[i];
 
         // lets separate errors by car now
-        let carErrors: string[] = [];
+        const carErrors: string[] = [];
 
         // first get this car from the catalog so we can know its info
         const car = cars.find(car => car.code === pos.car);
