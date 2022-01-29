@@ -1,4 +1,7 @@
-import {Car, CarCode, isCarCode} from './cars';
+import {Car, CarCode, isCarCode, cars} from './cars';
+
+import level0 from '@/assets/levels/level0';
+import level1 from '@/assets/levels/level1';
 
 /** valid moves to solve a puzzle, e.g. FU3, QD1, XR5 */
 export type Move = `${CarCode}${'U'|'D'|'R'|'L'}${1|2|3|4|5|6}`;
@@ -52,6 +55,8 @@ export interface ParsedLevel {
     /** row number in which the exit is located and the code of the car that must exit. */
     exit?: [number, CarCode],
 }
+
+export interface GameLevel extends RawLevel, ParsedLevel {}
 
 export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
 
@@ -159,4 +164,18 @@ export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
         carsPositions: [...posMap.values()],
         exit,
     };
+}
+
+export function getStandardLevels(): GameLevel[] {
+    const rawLevels = [
+        level0,
+        level1,
+    ];
+
+    const parsedLevels = rawLevels.map(level => parseRawLevelBody(level.body, cars));
+
+    return rawLevels.map((level, i) => ({
+        ...level,
+        ...parsedLevels[i],
+    }));
 }

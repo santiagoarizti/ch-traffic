@@ -12,8 +12,8 @@ const level: RawLevel = {
     body: `
     O O O Q Q Q
     R R R P P P
-    K D F G E X
-    K D F G E X
+    K D F G X X
+    K D F G E E
     H C I A J B
     H C I A J B`,
     picture: undefined,
