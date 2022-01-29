@@ -1,4 +1,4 @@
-import { RawLevel } from "@/lib/levels";
+import {RawLevel} from "@/lib/levels";
 
 const level: RawLevel = {
     id: 1,
@@ -26,6 +26,6 @@ const level: RawLevel = {
         'RL2',
         'QD2',
         'XR5',
-    ]
+    ],
 };
 export default level;

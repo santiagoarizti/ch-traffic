@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
-import { Car } from "../cars";
-import { parseRawLevelBody, isValidMove } from "../levels";
+import {describe, expect, it} from "vitest";
+import {Car} from "../cars";
+import {parseRawLevelBody, isValidMove} from "../levels";
 
 const carA: Car = {
     id: 13,
@@ -60,7 +60,7 @@ const cars: Car[] = [
         name: 'orange car',
         color: 'orange',
         size: 2,
-    }
+    },
 ];
 
 describe('function parseRawLevelBody', () => {

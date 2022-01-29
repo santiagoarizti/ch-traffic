@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useGameSettingsStore } from '@/stores/gameSettings';
+import {useGameSettingsStore} from '@/stores/gameSettings';
 import {ref, toRefs, computed} from 'vue';
 
 const store = useGameSettingsStore();

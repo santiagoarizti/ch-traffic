@@ -1,5 +1,5 @@
-import { Car, CarCode } from "./cars";
-import { CarPosition, Move, ParsedLevel } from "./levels";
+import {Car, CarCode} from "./cars";
+import {CarPosition, Move, ParsedLevel} from "./levels";
 
 
 /** when a state is invalid, you can find out why by peeking here. */
@@ -53,7 +53,7 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
         origin: [
             newPos.origin[0] + d * dir[0],
             newPos.origin[1] + d * dir[1],
-        ]
+        ],
     };
 
     return {
@@ -67,7 +67,7 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
  */
 function getBoundingBox(
     car: Car,
-    pos: CarPosition
+    pos: CarPosition,
 ): [
     tlx: number,
     tly: number,
@@ -90,7 +90,7 @@ function getBoundingBox(
 export function findStateErrors(
     level: ParsedLevel,
     state: LevelSnapshot,
-    cars: Car[]
+    cars: Car[],
 ): StateError[] {
     // perhaps we could explain what went wrong.
     const errors: StateError[] = [];

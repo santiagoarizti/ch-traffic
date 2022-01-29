@@ -1,4 +1,4 @@
-import { RawLevel } from "@/lib/levels";
+import {RawLevel} from "@/lib/levels";
 
 const level: RawLevel = {
     id: 0,

@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { Car } from "../cars";
-import { applyMove, isLevelBeat, findStateErrors, LevelSnapshot } from "../level-solver";
-import { Move, ParsedLevel } from "../levels";
+import {beforeEach, describe, expect, it} from "vitest";
+import {Car} from "../cars";
+import {applyMove, isLevelBeat, findStateErrors, LevelSnapshot} from "../level-solver";
+import {Move, ParsedLevel} from "../levels";
 
 describe('function isLevelBeat', () => {
     let level: ParsedLevel;
