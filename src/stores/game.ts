@@ -1,8 +1,11 @@
 import {GameLevel, getStandardLevels} from '@/lib/levels';
 import {defineStore} from 'pinia';
 import {ref, computed} from 'vue';
+// import {useGameSettingsStore} from '@/stores/gameSettings';
 
 export const useGameStore = defineStore('game', () => {
+
+    // const settings = useGameSettingsStore();
 
     // should be already parsed and validated.
     const levels = ref<GameLevel[]>([]);
@@ -20,8 +23,11 @@ export const useGameStore = defineStore('game', () => {
     }
 
     return {
+        // state
         levels,
+        // getters
         level,
+        // actions
         initStandardLevels,
         loadLevel,
     };

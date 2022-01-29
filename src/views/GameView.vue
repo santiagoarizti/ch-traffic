@@ -12,7 +12,7 @@ store.initStandardLevels();
 const selectedLevel = ref(store.level?.id);
 
 function loadLevel() {
-    if (selectedLevel.value) {
+    if (selectedLevel.value != null) {
         store.loadLevel(selectedLevel.value);
     }
 }
@@ -28,7 +28,7 @@ const disableSubmit = computed(() => selectedLevel.value == null);
     <label>
         Level select:
         <select
-            v-model="selectedLevel"
+            v-model.number="selectedLevel"
         >
             <option disabled>
                 Select a level

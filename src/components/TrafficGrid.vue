@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import {useGameStore} from '@/stores/game';
 import {useGameSettingsStore} from '@/stores/gameSettings';
-import {ref, toRefs, computed} from 'vue';
+import {ref, computed} from 'vue';
+import MovingCar from './MovingCar.vue';
 
-const store = useGameSettingsStore();
+const game = useGameStore();
+const settings = useGameSettingsStore();
 
-const {size, gridSize} = toRefs(store);
+const size = computed(() => game.level?.size ?? [4, 4]);
+
+const gridSize = computed(() => size.value.map(s => s * settings.squareSize));
 
 const squares = computed(() => {
     const squares = [];
@@ -18,6 +23,8 @@ const squares = computed(() => {
     return squares;
 });
 
+const cars = computed(() => game.level?.carsPositions ?? []);
+
 const showCoordenates = ref(false);
 
 </script>
@@ -28,13 +35,19 @@ const showCoordenates = ref(false);
             class="tg-square"
             v-for="(s, i) of squares"
             :key="i"
-            :style="{'--col': s.y + 1, '--row': s.x + 1}"
+            :style="{gridColumnStart: s.y + 1, gridRowStart: s.x + 1}"
         >
             <span v-if="showCoordenates">
                 {{i}}<br>
                 ({{s.x}}, {{s.y}})
             </span>
         </span>
+
+        <MovingCar
+            v-for="car of cars"
+            :key="car.car"
+            :car="car"
+        />
     </div>
 </template>
 
@@ -51,9 +64,9 @@ const showCoordenates = ref(false);
 
 .tg-square {
     border: 1px solid var(--color-border);
-    /*width: v-bind("`${squareSize}px`");
-    height: v-bind("`${squareSize}px`");*/
-    grid-column: var(--col) / span 1;
-    grid-row: var(--row) / span 1;
+    /* grid-column-start: bound directly to :style; */
+    grid-column-end: span 1;
+    /* grid-row-start: bound directly to :style; */
+    grid-row-end: span 1;
 }
 </style>
