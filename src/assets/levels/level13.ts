@@ -14,7 +14,7 @@ const level: RawLevel = {
         A A B B C -
         - - D - C O
         - E D X X O
-        P E D X X O
+        P E D F F O
         P - - G H H
         P I I G K K`,
     picture: undefined,

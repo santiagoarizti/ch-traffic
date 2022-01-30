@@ -1,4 +1,5 @@
-import {GameLevel, getStandardLevels} from '@/lib/levels';
+import {getStandardLevels} from '@/lib/level-loader';
+import {GameLevel} from '@/lib/levels';
 import {defineStore} from 'pinia';
 import {ref, computed} from 'vue';
 // import {useGameSettingsStore} from '@/stores/gameSettings';
