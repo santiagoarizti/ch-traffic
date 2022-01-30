@@ -2,6 +2,9 @@ import {Car, CarCode, isCarCode, cars} from './cars';
 
 import level0 from '@/assets/levels/level0';
 import level1 from '@/assets/levels/level1';
+import level2 from '@/assets/levels/level2';
+import level3 from '@/assets/levels/level3';
+import level4 from '@/assets/levels/level4';
 
 /** valid moves to solve a puzzle, e.g. FU3, QD1, XR5 */
 export type Move = `${CarCode}${'U'|'D'|'R'|'L'}${1|2|3|4|5|6}`;
@@ -170,6 +173,9 @@ export function getStandardLevels(): GameLevel[] {
     const rawLevels = [
         level0,
         level1,
+        level2,
+        level3,
+        level4,
     ];
 
     const parsedLevels = rawLevels.map(level => parseRawLevelBody(level.body, cars));
