@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {useGameStore} from '@/stores/game';
 import {useGameSettingsStore} from '@/stores/gameSettings';
-import {ref, computed} from 'vue';
+import {computed} from 'vue';
 import MovingCar from './MovingCar.vue';
+import TrafficGridCell from './TrafficGridCell.vue';
 
 const game = useGameStore();
 const settings = useGameSettingsStore();
@@ -13,8 +14,8 @@ const gridSize = computed(() => size.value.map(s => s * settings.squareSize));
 
 const squares = computed(() => {
     const squares = [];
-    for (let x = 0; x < size.value[0]; x++) {
-        for (let y = 0; y < size.value[1]; y++) {
+    for (let y = 0; y < size.value[1]; y++) {
+        for (let x = 0; x < size.value[0]; x++) {
             squares.push({
                 x, y,
             });
@@ -25,23 +26,17 @@ const squares = computed(() => {
 
 const cars = computed(() => game.level?.carsPositions ?? []);
 
-const showCoordenates = ref(false);
-
 </script>
 
 <template>
     <div class="traffic-grid">
-        <span
-            class="tg-square"
+
+        <TrafficGridCell
             v-for="(s, i) of squares"
             :key="i"
-            :style="{gridColumnStart: s.y + 1, gridRowStart: s.x + 1}"
-        >
-            <span v-if="showCoordenates">
-                {{i}}<br>
-                ({{s.x}}, {{s.y}})
-            </span>
-        </span>
+            :square="s"
+            :index="i"
+        />
 
         <MovingCar
             v-for="car of cars"
@@ -62,11 +57,4 @@ const showCoordenates = ref(false);
     grid-template-rows: repeat(v-bind('size[1]'), 1fr);
 }
 
-.tg-square {
-    border: 1px solid var(--color-border);
-    /* grid-column-start: bound directly to :style; */
-    grid-column-end: span 1;
-    /* grid-row-start: bound directly to :style; */
-    grid-row-end: span 1;
-}
 </style>

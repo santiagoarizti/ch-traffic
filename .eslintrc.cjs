@@ -17,7 +17,7 @@ module.exports = {
         "object-curly-spacing": ["warn", "never"],
         "array-bracket-spacing": ["warn", "never"],
         "comma-dangle": ["warn", "always-multiline"],
-        "@typescript-eslint/no-non-null-assertion": "warn",
+        "@typescript-eslint/no-non-null-assertion": "off",
     },
     "overrides": [
         {
