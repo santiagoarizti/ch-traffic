@@ -1,10 +1,10 @@
 import {Car, CarCode, isCarCode} from './cars';
 
 /** valid moves to solve a puzzle, e.g. FU3, QD1, XR5 */
-export type Move = `${CarCode}${'U'|'D'|'R'|'L'}${1|2|3|4|5|6}`;
+export type Move = string; // `${CarCode}${'U'|'D'|'R'|'L'}${1|2|3|4|5|6}`; (this was causing unreadable type declarations)
 
 export function isValidMoveSyntax(move: string): move is Move {
-    return /^.[UDRL][1-6]$/.test(move) && isCarCode(move[0]);
+    return /^.[UDRL][1-6]$/.test(move) && isCarCode(move[0]!);
 }
 
 export interface RawLevel {
@@ -66,13 +66,13 @@ export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
     let exit: ParsedLevel['exit'];
     const exitLine = lines.findIndex(l => l.indexOf('>') > 0);
     if (exitLine >= 0) {
-        const match = lines[exitLine].match(/>(\w)/);
+        const match = lines[exitLine]!.match(/>(\w)/);
         const exitCar = match?.[1] ?? 'X';
         if (isCarCode(exitCar)) {
             exit = [exitLine, exitCar];
         }
         // now the grid is pure, it has no exit line info.
-        lines[exitLine] = lines[exitLine].replace(/>.*$/, '').trim();
+        lines[exitLine] = lines[exitLine]!.replace(/>.*$/, '').trim();
     }
 
     // detected size of level, simply count lines and max length of lines to find size.
@@ -83,15 +83,15 @@ export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
 
     // now the grid only contains useful information for finding the size.
     for (let l = 0; l < lines.length; l++) {
-        for (let i = 0; i < lines[l].length; i++) {
-            if (lines[l][i] === '-') {
+        for (let i = 0; i < lines[l]!.length; i++) {
+            if (lines[l]![i] === '-') {
                 continue; // separator character, ignore
             }
 
-            const car = cars.find(car => car.code === lines[l][i]);
+            const car = cars.find(car => car.code === lines[l]![i]);
 
             if (!car) {
-                throw new Error(`unexpected char '${lines[l][i]}' found in body`);
+                throw new Error(`unexpected char '${lines[l]![i]}' found in body`);
             }
 
             // helper array to find cars more easily
@@ -116,9 +116,9 @@ export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
                 // first time seeing this car, lets just make sure it is complete and find if it is horizontal
                 // or vertical.
                 let horizontal: boolean;
-                if (len.every(d => lines[l][i + d] === car.code)) {
+                if (len.every(d => lines[l]![i + d] === car.code)) {
                     horizontal = true;
-                } else if(len.every(d => lines[l + d][i] === car.code)) {
+                } else if(len.every(d => lines[l + d]?.[i] === car.code)) {
                     horizontal = false;
                 } else {
                     throw new Error(`car '${car.code}' is incomplete`);

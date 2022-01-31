@@ -1,5 +1,6 @@
 import {getStandardLevels} from '@/lib/level-loader';
-import {GameLevel} from '@/lib/levels';
+import { applyMove } from '@/lib/level-solver';
+import {GameLevel, Move} from '@/lib/levels';
 import {defineStore} from 'pinia';
 import {ref, computed} from 'vue';
 // import {useGameSettingsStore} from '@/stores/gameSettings';
@@ -19,8 +20,17 @@ export const useGameStore = defineStore('game', () => {
 
     const level = computed<GameLevel|undefined>(() => levels.value.find(l => l.id === activeLevelId.value));
 
+    // const state: LevelSnapshot[] = [{
+    //     carsPositions: level.carsPositions,
+    //     history: [],
+    // }];
+
     function loadLevel(id: number) {
         activeLevelId.value = id;
+    }
+
+    function makeMove(move: Move) {
+    //     applyMove();
     }
 
     return {
@@ -31,5 +41,6 @@ export const useGameStore = defineStore('game', () => {
         // actions
         initStandardLevels,
         loadLevel,
+        makeMove,
     };
 });

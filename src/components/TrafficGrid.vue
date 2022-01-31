@@ -8,7 +8,7 @@ import TrafficGridCell from './TrafficGridCell.vue';
 const game = useGameStore();
 const settings = useGameSettingsStore();
 
-const size = computed(() => game.level?.size ?? [4, 4]);
+const size = computed<[number, number]>(() => game.level?.size ?? [4, 4]);
 
 const gridSize = computed(() => size.value.map(s => s * settings.squareSize));
 

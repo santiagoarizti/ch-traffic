@@ -2,22 +2,12 @@
 
 import TrafficGrid from '@/components/TrafficGrid.vue';
 import {useGameStore} from '@/stores/game';
-import {ref, computed} from 'vue';
+import LevelSelector from '@/components/LevelSelector.vue';
+import SolutionNavigator from '@/components/SolutionNavigator.vue';
 
 const store = useGameStore();
 // load the standard levels into the store.
 store.initStandardLevels();
-
-// just initial value
-const selectedLevel = ref(store.level?.id);
-
-function loadLevel() {
-    if (selectedLevel.value != null) {
-        store.loadLevel(selectedLevel.value);
-    }
-}
-
-const disableSubmit = computed(() => selectedLevel.value == null);
 
 </script>
 
@@ -25,34 +15,13 @@ const disableSubmit = computed(() => selectedLevel.value == null);
 <div>
     <h2>Game</h2>
 
-    <label>
-        Level select:
-        <select
-            v-model.number="selectedLevel"
-        >
-            <option disabled>
-                Select a level
-            </option>
-            <option
-                v-for="level of store.levels"
-                :key="level.id"
-                :value="level.id"
-            >
-                {{ level.id }}:
-                {{ level.name }}
-            </option>
-        </select>
-    </label>
-    <button
-        @click="loadLevel"
-        :disabled="disableSubmit"
-    >
-        load
-    </button>
+    <LevelSelector />
 
     <div class="grid-container">
         <TrafficGrid />
     </div>
+
+    <SolutionNavigator />
 </div>
 </template>
 

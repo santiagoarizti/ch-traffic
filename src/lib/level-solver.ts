@@ -34,7 +34,7 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
     // extract parts of move (car, directio, amount)
     const car = move[0] as CarCode;
     const dir = dirMap[move[1]!]!;
-    const d: number = parseInt(move[2]); // delta
+    const d: number = parseInt(move[2]!); // delta
 
     // find car to move in current state
     const index = state.carsPositions.findIndex(pos => pos.car === car);
@@ -44,7 +44,7 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
 
     // copy the state to avoid mutating it
     const newPositions = [...state.carsPositions];
-    const newPos = {...newPositions[index]};
+    const newPos = {...newPositions[index]!};
 
     // first check that the car is allowed to move in that direction intrincecally
     const checkDir = newPos.horizontal ? 1 : 0;
@@ -54,7 +54,7 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
 
     // make updates to origin and update the new positions
     newPositions[index] = {
-        ...newPositions[index],
+        ...newPositions[index]!,
         origin: [
             newPos.origin[0] + d * dir[0],
             newPos.origin[1] + d * dir[1],
@@ -102,7 +102,7 @@ export function findStateErrors(
 
     // check cars 1:1 and add them to the "safe" box until one collides.
     for (let i = 0; i < state.carsPositions.length; i++) {
-        const pos = state.carsPositions[i];
+        const pos = state.carsPositions[i]!;
 
         // lets separate errors by car now
         const carErrors: string[] = [];
@@ -131,7 +131,7 @@ export function findStateErrors(
 
         // now lets compare against all other cars.
         for (let j = 0; j < i; j++) {
-            const prev = state.carsPositions[j];
+            const prev = state.carsPositions[j]!;
             // we will be using this a lot, make a short alias
             const pcar = cars.find(car => car.code === prev.car);
             if (!pcar) throw new Error(`car '${prev.car}'s info not provided`);
@@ -178,7 +178,7 @@ export function testLevelSolution(level: ParsedLevel, solution: Move[], cars: Ca
     }
 
     for (let i = 0; i < solution.length; i++) {
-        const step = solution[i];
+        const step = solution[i]!;
 
         const newState = applyMove(state.at(-1)!, step);
 
