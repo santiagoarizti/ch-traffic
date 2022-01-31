@@ -31,6 +31,11 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
     const dir = dirMap[move[1]];
     const d: number = parseInt(move[2]); // delta
 
+    // this can happen in a typo during importing levels from physical cards.
+    if (!dir) {
+        throw new Error(`invalid direction '${move[1]}' on move '${move}'`);
+    }
+
     // find car to move in current state
     const index = state.carsPositions.findIndex(pos => pos.car === car);
     if (index < 0) {

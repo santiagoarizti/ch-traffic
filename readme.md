@@ -8,6 +8,7 @@ Tools:
 
 - vite
 - vue 3
+- pinia (vuex 5 alt)
 - vscode + volar
 - vitest
 - cypress

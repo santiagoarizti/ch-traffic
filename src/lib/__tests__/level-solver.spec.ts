@@ -95,6 +95,10 @@ describe('function applyMove', () => {
         const move: Move = 'AR1';
         expect(() => applyMove(state, move)).toThrowError(`car 'A' not found in state provided`);
     });
+    it('fails on invalid move, bad direction', () => {
+        const move: Move = 'AS1' as Move; // this is bad on purpose
+        expect(() => applyMove(state, move)).toThrowError(`invalid direction 'S' on move 'AS1'`);
+    });
 });
 
 describe('findStateErrors function', () => {

@@ -17,6 +17,9 @@ const level: RawLevel = {
         - - D - E E
         F F D G G -`,
     picture: undefined,
-    solution: ['EL1', 'PD2', 'XR1', 'AD1', 'OL3', 'CU2', 'BU1', 'XR5'],
+    solution: [
+        'EL1', 'PD2', 'XR1', 'AD1', 'OL3',
+        'CU2', 'BU1', 'XR5',
+    ],
 };
 export default level;

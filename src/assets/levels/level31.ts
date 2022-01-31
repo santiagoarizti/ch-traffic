@@ -18,6 +18,15 @@ const level: RawLevel = {
         F F Q - - P
         - - Q R R R`,
     picture: undefined,
-    solution: ['AR1', 'DU2', 'XL1', 'QU2', 'FR3', 'QD2', 'XR1', 'DD4', 'XL1', 'AL1', 'QU3', 'EL3', 'BD1', 'CL1', 'PU1', 'FR1', 'BD1', 'QD3', 'XR3', 'QU3', 'ER1', 'DU3', 'EL1', 'QD3', 'AR1', 'DU1', 'XL3', 'BU1', 'QU2', 'FL4', 'BD1', 'QD2', 'XR3', 'QU1', 'RL1', 'PD2', 'XR3'],
+    solution: [
+        'AR1', 'DU2', 'XL1', 'QU2', 'FR3',
+        'QD2', 'XR1', 'DD4', 'XL1', 'AL1',
+        'QU3', 'EL3', 'BD1', 'CL1', 'PU1',
+        'FR1', 'BD1', 'QD3', 'XR3', 'QU3',
+        'ER1', 'DU3', 'EL1', 'QD3', 'AR1',
+        'DU1', 'XL3', 'BU1', 'QU2', 'FL4',
+        'BD1', 'QD2', 'XR3', 'QU1', 'RL1',
+        'PD2', 'XR3',
+    ],
 };
 export default level;
