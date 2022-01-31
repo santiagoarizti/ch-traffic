@@ -18,6 +18,11 @@ import level14 from '@/assets/levels/level14';
 import level15 from '@/assets/levels/level15';
 import level16 from '@/assets/levels/level16';
 import level17 from '@/assets/levels/level17';
+import level18 from '@/assets/levels/level18';
+import level19 from '@/assets/levels/level19';
+import level20 from '@/assets/levels/level20';
+import level21 from '@/assets/levels/level21';
+import level22 from '@/assets/levels/level22';
 
 
 export function getStandardLevels(): GameLevel[] {
@@ -40,6 +45,11 @@ export function getStandardLevels(): GameLevel[] {
         level15,
         level16,
         level17,
+        level18,
+        level19,
+        level20,
+        level21,
+        level22,
     ];
 
     const gameLevels: GameLevel[] = [];
