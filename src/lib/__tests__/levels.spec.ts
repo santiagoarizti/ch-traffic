@@ -175,13 +175,18 @@ describe('isValidMoveSyntax function', () => {
         const valid = isValidMoveSyntax(move);
         expect(valid).toBeFalsy();
     });
-    it('finds an invalid move', () => {
+    it('finds an invalid move 2', () => {
         const move = 'XU7';
         const valid = isValidMoveSyntax(move);
         expect(valid).toBeFalsy();
     });
-    it('finds an invalid move', () => {
+    it('finds an invalid move 3', () => {
         const move = '.U1';
+        const valid = isValidMoveSyntax(move);
+        expect(valid).toBeFalsy();
+    });
+    it('finds an invalid move 4', () => {
+        const move = 'AD1santi';
         const valid = isValidMoveSyntax(move);
         expect(valid).toBeFalsy();
     });

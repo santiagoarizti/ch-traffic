@@ -97,7 +97,7 @@ describe('function applyMove', () => {
     });
     it('fails on invalid move, bad direction', () => {
         const move: Move = 'AS1' as Move; // this is bad on purpose
-        expect(() => applyMove(state, move)).toThrowError(`invalid direction 'S' on move 'AS1'`);
+        expect(() => applyMove(state, move)).toThrowError(`invalid move syntax on move 'AS1'`);
     });
 });
 

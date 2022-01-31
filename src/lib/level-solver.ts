@@ -1,5 +1,5 @@
 import {Car, CarCode} from "./cars";
-import {CarPosition, Move, ParsedLevel} from "./levels";
+import {CarPosition, isValidMoveSyntax, Move, ParsedLevel} from "./levels";
 
 
 /** when a state is invalid, you can find out why by peeking here. */
@@ -26,15 +26,15 @@ const dirMap: {[dir: string]: [x: -1|0|1, y: -1|0|1]} = {
 };
 
 export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
+    if (!isValidMoveSyntax(move)) {
+        // this can happen in a typo during importing levels from physical cards.
+        throw new Error(`invalid move syntax on move '${move}'`);
+    }
+
     // extract parts of move (car, directio, amount)
     const car = move[0] as CarCode;
-    const dir = dirMap[move[1]];
+    const dir = dirMap[move[1]!]!;
     const d: number = parseInt(move[2]); // delta
-
-    // this can happen in a typo during importing levels from physical cards.
-    if (!dir) {
-        throw new Error(`invalid direction '${move[1]}' on move '${move}'`);
-    }
 
     // find car to move in current state
     const index = state.carsPositions.findIndex(pos => pos.car === car);
@@ -49,7 +49,7 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
     // first check that the car is allowed to move in that direction intrincecally
     const checkDir = newPos.horizontal ? 1 : 0;
     if (dir[checkDir] !== 0) {
-        throw new Error(`car '${car}' is not oriented to allow moving in this direction`);
+        throw new Error(`car '${car}' is not oriented to allow moving in this direction '${move}'`);
     }
 
     // make updates to origin and update the new positions
