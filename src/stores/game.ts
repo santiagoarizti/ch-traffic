@@ -3,7 +3,6 @@ import {applyMove, LevelSnapshot} from '@/lib/level-solver';
 import {GameLevel, Move} from '@/lib/levels';
 import {defineStore} from 'pinia';
 import {ref, computed, watch} from 'vue';
-// import {useGameSettingsStore} from '@/stores/gameSettings';
 
 export const useGameStore = defineStore('game', () => {
 

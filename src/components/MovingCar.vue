@@ -3,8 +3,10 @@ import {computed} from 'vue';
 import {CarPosition} from '@/lib/levels';
 import {cars} from '@/lib/cars';
 import {useGameSettingsStore} from '@/stores/gameSettings';
+import { useMouseStore } from '@/stores/mouse';
 
 const settings = useGameSettingsStore();
+const mouse = useMouseStore();
 
 const props = defineProps<{
     car: CarPosition,
@@ -18,11 +20,22 @@ const height = computed(() => props.car.horizontal ? 1 : theCar.value.size);
 const gridColumnStart = computed(() => props.car.origin[0] + 1);
 const gridRowStart = computed(() => props.car.origin[1] + 1);
 
+// the mouse up event will be handled higher up
+function onMousedown(e: MouseEvent) {
+    // we don't want to trigger browser drag/drop
+    e.preventDefault();
+    mouse.selectCar(props.car.car);
+}
+
+const isSelected = computed(() => mouse.selectedCar === props.car.car);
+
 </script>
 
 <template>
     <span
         class="moving-car"
+        :class="{'moving-car--selected': isSelected}"
+        @mousedown.exact="onMousedown"
     >
         <span
             v-if="settings.showSolution"
@@ -45,6 +58,12 @@ const gridRowStart = computed(() => props.car.origin[1] + 1);
     display: flex;
     justify-content: center;
     align-items: center;
+
+    /* we will be handling the drag/drop stuff from an outside container */
+    cursor: pointer;
+}
+.moving-car--selected {
+    opacity: 0.5
 }
 .car-label {
     font-size: 4rem;

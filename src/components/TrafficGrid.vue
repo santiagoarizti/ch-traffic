@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import {useGameStore} from '@/stores/game';
 import {useGameSettingsStore} from '@/stores/gameSettings';
+import { useMouseStore } from '@/stores/mouse';
 import {computed} from 'vue';
 import MovingCar from './MovingCar.vue';
 import TrafficGridCell from './TrafficGridCell.vue';
 
 const game = useGameStore();
 const settings = useGameSettingsStore();
+const mouse = useMouseStore();
 
 const size = computed<[number, number]>(() => game.level?.size ?? [4, 4]);
 
@@ -24,10 +26,21 @@ const squares = computed(() => {
 
 const cars = computed(() => game.currentState?.carsPositions ?? []);
 
+function onMouseup() {
+    mouse.clearSelection();
+}
+function onMouseleave() {
+    mouse.clearSelection();
+}
+
 </script>
 
 <template>
-    <div class="traffic-grid">
+    <div
+        class="traffic-grid"
+        @mouseup="onMouseup"
+        @mouseleave="onMouseleave"
+    >
 
         <TrafficGridCell
             v-for="(s, i) of squares"
@@ -48,15 +61,12 @@ const cars = computed(() => game.currentState?.carsPositions ?? []);
 <style>
 .traffic-grid {
     background-color: var(--color-background-soft);
-    width:  v-bind("`${gridSize[0]}px`");
+    width: v-bind("`${gridSize[0]}px`");
     height: v-bind("`${gridSize[1]}px`");
 
     display: grid;
     grid-template-columns: repeat(v-bind('size[0]'), 1fr);
     grid-template-rows: repeat(v-bind('size[1]'), 1fr);
-
-    /* we will be handling the drag/drop stuff from an outside container */
-    pointer-events: none;
 }
 
 </style>
