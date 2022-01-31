@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 import {Car} from "../cars";
-import {parseRawLevelBody, isValidMove} from "../levels";
+import {parseRawLevelBody, isValidMoveSyntax} from "../levels";
 
 const carA: Car = {
     id: 13,
@@ -159,30 +159,30 @@ describe('function parseRawLevelBody', () => {
     });
 });
 
-describe('isValidMove function', () => {
+describe('isValidMoveSyntax function', () => {
     it('finds a valid move', () => {
         const move = 'AU1';
-        const valid = isValidMove(move);
+        const valid = isValidMoveSyntax(move);
         expect(valid).toBeTruthy();
     });
     it('finds a valid move 2', () => {
         const move = 'FD6';
-        const valid = isValidMove(move);
+        const valid = isValidMoveSyntax(move);
         expect(valid).toBeTruthy();
     });
     it('finds an invalid move', () => {
         const move = 'XXX';
-        const valid = isValidMove(move);
+        const valid = isValidMoveSyntax(move);
         expect(valid).toBeFalsy();
     });
     it('finds an invalid move', () => {
         const move = 'XU7';
-        const valid = isValidMove(move);
+        const valid = isValidMoveSyntax(move);
         expect(valid).toBeFalsy();
     });
     it('finds an invalid move', () => {
         const move = '.U1';
-        const valid = isValidMove(move);
+        const valid = isValidMoveSyntax(move);
         expect(valid).toBeFalsy();
     });
 });

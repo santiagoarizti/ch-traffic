@@ -3,7 +3,7 @@ import {Car, CarCode, isCarCode} from './cars';
 /** valid moves to solve a puzzle, e.g. FU3, QD1, XR5 */
 export type Move = `${CarCode}${'U'|'D'|'R'|'L'}${1|2|3|4|5|6}`;
 
-export function isValidMove(move: string): move is Move {
+export function isValidMoveSyntax(move: string): move is Move {
     return /^.[UDRL][1-6]$/.test(move) && isCarCode(move[0]);
 }
 
@@ -53,7 +53,7 @@ export interface ParsedLevel {
     exit?: [number, CarCode],
 }
 
-export interface GameLevel extends RawLevel, ParsedLevel {}
+export interface GameLevel extends Omit<RawLevel, 'body'>, ParsedLevel {}
 
 export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
 

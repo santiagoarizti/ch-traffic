@@ -1,7 +1,22 @@
 import {beforeEach, describe, expect, it} from "vitest";
 import {Car} from "../cars";
-import {applyMove, isLevelBeat, findStateErrors, LevelSnapshot} from "../level-solver";
+import {applyMove, isLevelBeat, findStateErrors, LevelSnapshot, testLevelSolution} from "../level-solver";
 import {Move, ParsedLevel} from "../levels";
+
+const carA: Car = {
+    id: 13,
+    code: 'A',
+    name: 'lemon car',
+    color: 'lightgreen',
+    size: 2,
+};
+const mq: Car = {
+    id: 9,
+    code: 'X',
+    name: 'mcqueen',
+    color: 'red',
+    size: 2,
+};
 
 describe('function isLevelBeat', () => {
     let level: ParsedLevel;
@@ -77,20 +92,7 @@ describe('function applyMove', () => {
 
 describe('findStateErrors function', () => {
     let level: ParsedLevel;
-    const carA: Car = {
-        id: 13,
-        code: 'A',
-        name: 'lemon car',
-        color: 'lightgreen',
-        size: 2,
-    };
-    const mq: Car = {
-        id: 9,
-        code: 'X',
-        name: 'mcqueen',
-        color: 'red',
-        size: 2,
-    };
+
     beforeEach(() => {
         level = {
             size: [6, 6],
@@ -211,5 +213,47 @@ describe('findStateErrors function', () => {
         };
         const errors = findStateErrors(level, state, [mq, carA]).find(e => e.car === 'A')?.errors ?? [];
         expect(errors).toContain(`car 'A' would collide with car 'X'`);
+    });
+});
+
+describe('function testLevelSolution', () => {
+    it('solves a level', () => {
+        const level: ParsedLevel = {
+            size: [6, 6],
+            carsPositions: [
+                {car: 'X', horizontal: true, origin: [0, 2]},
+                {car: 'A', horizontal: false, origin: [5, 2]},
+            ],
+            exit: [2, 'X'],
+        };
+        const solution: Move[] = ['AD1', 'XR6'];
+
+        expect(() => testLevelSolution(level, solution, [carA, mq])).not.toThrowError();
+    });
+    it('solves fails at bad solution', () => {
+        const level: ParsedLevel = {
+            size: [6, 6],
+            carsPositions: [
+                {car: 'X', horizontal: true, origin: [0, 2]},
+                {car: 'A', horizontal: false, origin: [5, 2]},
+            ],
+            exit: [2, 'X'],
+        };
+        const solution: Move[] = ['AD1']; // same as last test, but missing one move.
+
+        expect(() => testLevelSolution(level, solution, [carA, mq])).toThrowError('solution provided cannot solve the puzzle');
+    });
+    it('solves fails at bad level', () => {
+        const level: ParsedLevel = {
+            size: [6, 6],
+            carsPositions: [
+                {car: 'X', horizontal: true, origin: [0, 2]},
+                {car: 'A', horizontal: false, origin: [5, 2]},
+            ],
+            exit: [2, 'X'],
+        };
+        const solution: Move[] = ['AD6', 'XR6'];
+
+        expect(() => testLevelSolution(level, solution, [carA, mq])).toThrowError(`invalid solution (0: AD6): car 'A' is out of bounds`);
     });
 });

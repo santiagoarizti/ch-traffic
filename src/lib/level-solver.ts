@@ -1,5 +1,5 @@
 import {Car, CarCode} from "./cars";
-import {CarPosition, Move, ParsedLevel} from "./levels";
+import {CarPosition, GameLevel, isValidMoveSyntax, Move, ParsedLevel} from "./levels";
 
 
 /** when a state is invalid, you can find out why by peeking here. */
@@ -157,4 +157,35 @@ export function isLevelBeat(level: ParsedLevel, state: LevelSnapshot) {
     }
 
     return false;
+}
+
+export function testLevelSolution(level: ParsedLevel, solution: Move[], cars: Car[]) {
+    const state: LevelSnapshot[] = [{
+        carsPositions: level.carsPositions,
+        history: [],
+    }];
+
+    if (!level.exit) {
+        throw new Error('this level cannot be solved');
+    }
+
+    for (let i = 0; i < solution.length; i++) {
+        const step = solution[i];
+
+        const newState = applyMove(state.at(-1)!, step);
+
+        const errors = findStateErrors(level, newState, cars);
+
+        if (errors.length > 0) {
+            for (const e of errors) {
+                throw new Error(`invalid solution (${i}: ${step}): ${e.errors[0]}`);
+            }
+        }
+
+        state.push(newState);
+    }
+
+    if (!isLevelBeat(level, state.at(-1)!)) {
+        throw new Error('solution provided cannot solve the puzzle');
+    }
 }

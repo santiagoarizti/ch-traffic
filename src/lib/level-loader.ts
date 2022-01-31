@@ -42,6 +42,7 @@ import level37 from '@/assets/levels/level37';
 import level38 from '@/assets/levels/level38';
 import level39 from '@/assets/levels/level39';
 import level40 from '@/assets/levels/level40';
+import { testLevelSolution } from './level-solver';
 
 
 export function getStandardLevels(): GameLevel[] {
@@ -93,6 +94,12 @@ export function getStandardLevels(): GameLevel[] {
     for (const level of rawLevels) {
         try {
             const parsed = parseRawLevelBody(level.body, cars);
+
+            if (level.solution && parsed.exit) {
+                // if level claims to have a solution and an exit, validate it
+                testLevelSolution(parsed, level.solution, cars);
+            }
+
             gameLevels.push({
                 ...level,
                 ...parsed,
