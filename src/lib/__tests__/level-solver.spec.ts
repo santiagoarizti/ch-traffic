@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, it} from "vitest";
 import {Car} from "../cars";
-import {applyMove, isLevelBeat, findStateErrors, LevelSnapshot, testLevelSolution} from "../level-solver";
-import {Move, ParsedLevel} from "../levels";
+import {applyMove, isLevelBeat, findStateErrors, LevelSnapshot, testLevelSolution, getBoundingBox} from "../level-solver";
+import {CarPosition, Move, ParsedLevel} from "../levels";
 
 const carA: Car = {
     id: 13,
@@ -16,6 +16,13 @@ const mq: Car = {
     name: 'mcqueen',
     color: 'red',
     size: 2,
+};
+const truck: Car = {
+    id: 1,
+    code: 'Q',
+    name: 'blue truck',
+    color: 'blue',
+    size: 3,
 };
 
 describe('function isLevelBeat', () => {
@@ -181,6 +188,26 @@ describe('findStateErrors function', () => {
         const errors = findStateErrors(level, state, [mq, carA]);
         expect(errors).toHaveLength(0);
     });
+    it('finds an valid state, multi car, real case 1', () => {
+        const state: LevelSnapshot = {
+            carsPositions: [{
+                car: 'X',
+                horizontal: true,
+                origin: [2, 2],
+            }, {
+                car: 'A',
+                horizontal: false,
+                origin: [0, 3],
+            }, {
+                car: 'Q',
+                horizontal: true,
+                origin: [0, 5],
+            }],
+            history: [],
+        };
+        const errors = findStateErrors(level, state, [mq, carA, truck]);
+        expect(errors).toHaveLength(0);
+    });
     it('finds an ivalid state, multi car, head on collision', () => {
         const state: LevelSnapshot = {
             carsPositions: [{
@@ -213,6 +240,14 @@ describe('findStateErrors function', () => {
         };
         const errors = findStateErrors(level, state, [mq, carA]).find(e => e.car === 'A')?.errors ?? [];
         expect(errors).toContain(`car 'A' would collide with car 'X'`);
+    });
+});
+
+describe('function getBoundingBox', () => {
+    it('finds correct bounding box', () => {
+        const pos: CarPosition = {car: 'A', horizontal: true, origin: [0, 0]};
+        const bb = getBoundingBox(carA, pos);
+        expect(bb).toEqual([0, 0, 1, 0]);
     });
 });
 

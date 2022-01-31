@@ -6,16 +6,16 @@ const level: RawLevel = {
     creator: 'RUSHHOUR',
     date: '1996-01-01',
     description: `
-    level 1 of the built-in leve sin the rush hour game,
-    translated by santi.`,
+        level 1 of the built-in leve sin the rush hour game,
+        translated by santi.`,
     difficulty: 'beginner',
     body: `
-    A A - - - O
-    P - - Q - O
-    P X X Q - O >X
-    P - - Q - -
-    B - - - C C
-    B - R R R -`,
+        A A - - - O
+        P - - Q - O
+        P X X Q - O >X
+        P - - Q - -
+        B - - - C C
+        B - R R R -`,
     picture: undefined,
     solution: [
         'CL3',

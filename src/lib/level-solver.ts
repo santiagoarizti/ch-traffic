@@ -1,5 +1,5 @@
 import {Car, CarCode} from "./cars";
-import {CarPosition, GameLevel, isValidMoveSyntax, Move, ParsedLevel} from "./levels";
+import {CarPosition, Move, ParsedLevel} from "./levels";
 
 
 /** when a state is invalid, you can find out why by peeking here. */
@@ -65,7 +65,7 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
 /**
  * based on a car size and a car position, get top left corner and bottom right
  */
-function getBoundingBox(
+export function getBoundingBox(
     car: Car,
     pos: CarPosition,
 ): [
@@ -128,7 +128,10 @@ export function findStateErrors(
         for (let j = 0; j < i; j++) {
             const prev = state.carsPositions[j];
             // we will be using this a lot, make a short alias
-            const [px1, py1, px2, py2] = getBoundingBox(car, prev);
+            const pcar = cars.find(car => car.code === prev.car);
+            if (!pcar) throw new Error(`car '${prev.car}'s info not provided`);
+
+            const [px1, py1, px2, py2] = getBoundingBox(pcar, prev);
 
             if ( // see how I compare 1 vs 2 and 2 vs 1, that is how to collide.
                 x1 <= px2 && x2 >= px1 && // overlapping x coordenates
