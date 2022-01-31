@@ -37,6 +37,12 @@ import level33 from '@/assets/levels/level33';
 import level34 from '@/assets/levels/level34';
 import level35 from '@/assets/levels/level35';
 
+import level36 from '@/assets/levels/level36';
+import level37 from '@/assets/levels/level37';
+import level38 from '@/assets/levels/level38';
+import level39 from '@/assets/levels/level39';
+import level40 from '@/assets/levels/level40';
+
 
 export function getStandardLevels(): GameLevel[] {
     const rawLevels = [
@@ -76,6 +82,11 @@ export function getStandardLevels(): GameLevel[] {
         level33,
         level34,
         level35,
+        level36,
+        level37,
+        level38,
+        level39,
+        level40,
     ];
 
     const gameLevels: GameLevel[] = [];
