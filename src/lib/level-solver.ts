@@ -12,7 +12,7 @@ export interface LevelSnapshot {
     /** result from parseRawLevelBody */
     carsPositions: CarPosition[],
     /** all moves that have been made so far */
-    history: Move[],
+    moves: Move[],
     /** if cars are in invalid positions the errors would appear here */
     errors?: StateError[],
 }
@@ -63,7 +63,7 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
 
     return {
         carsPositions: newPositions,
-        history: [...state.history, move],
+        moves: [...state.moves, move],
     };
 }
 
@@ -170,7 +170,7 @@ export function isLevelBeat(level: ParsedLevel, state: LevelSnapshot) {
 export function testLevelSolution(level: ParsedLevel, solution: Move[], cars: Car[]) {
     const state: LevelSnapshot[] = [{
         carsPositions: level.carsPositions,
-        history: [],
+        moves: [],
     }];
 
     if (!level.exit) {

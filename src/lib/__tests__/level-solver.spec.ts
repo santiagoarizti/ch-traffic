@@ -46,7 +46,7 @@ describe('function isLevelBeat', () => {
                 horizontal: true,
                 origin: [6, 2],
             }],
-            history: [],
+            moves: [],
         };
         const isBeat = isLevelBeat(level, state);
         expect(isBeat).toBeTruthy();
@@ -58,7 +58,7 @@ describe('function isLevelBeat', () => {
                 horizontal: true,
                 origin: [3, 2],
             }],
-            history: [],
+            moves: [],
         };
         const isBeat = isLevelBeat(level, state);
         expect(isBeat).toBeFalsy();
@@ -74,14 +74,14 @@ describe('function applyMove', () => {
                 horizontal: true,
                 origin: [2, 2],
             }],
-            history: [],
+            moves: [],
         };
     });
 
     it('applies move correctly', () => {
         const move: Move = 'XR1';
         const newState = applyMove(state, move);
-        expect(newState.history.at(-1)).toEqual(move);
+        expect(newState.moves.at(-1)).toEqual(move);
         const myPos = newState.carsPositions.find(p => p.car === 'X');
         expect(myPos?.origin).toEqual([3, 2]);
     });
@@ -121,7 +121,7 @@ describe('findStateErrors function', () => {
                 horizontal: true,
                 origin: [2, 2],
             }],
-            history: [],
+            moves: [],
         };
         const errors = findStateErrors(level, state, [mq]);
         expect(errors).toHaveLength(0);
@@ -133,7 +133,7 @@ describe('findStateErrors function', () => {
                 horizontal: true,
                 origin: [2, 2],
             }],
-            history: [],
+            moves: [],
         };
         expect(() => findStateErrors(level, state, [])).toThrowError();
     });
@@ -144,7 +144,7 @@ describe('findStateErrors function', () => {
                 horizontal: true,
                 origin: [5, 2],
             }],
-            history: [],
+            moves: [],
         };
         const errors = findStateErrors(level, state, [mq]);
         expect(errors).toHaveLength(0);
@@ -156,7 +156,7 @@ describe('findStateErrors function', () => {
                 horizontal: true,
                 origin: [5, 0],
             }],
-            history: [],
+            moves: [],
         };
         const errors = findStateErrors(level, state, [mq]).find(e => e.car === 'X')?.errors ?? [];
         expect(errors).toContain(`car 'X' is out of bounds`);
@@ -168,7 +168,7 @@ describe('findStateErrors function', () => {
                 horizontal: true,
                 origin: [-1, 0],
             }],
-            history: [],
+            moves: [],
         };
         const errors = findStateErrors(level, state, [mq]).find(e => e.car === 'X')?.errors ?? [];
         expect(errors).toContain(`car 'X' is out of bounds`);
@@ -187,7 +187,7 @@ describe('findStateErrors function', () => {
                 horizontal: true,
                 origin: [2, 3],
             }],
-            history: [],
+            moves: [],
         };
         const errors = findStateErrors(level, state, [mq, carA]);
         expect(errors).toHaveLength(0);
@@ -207,7 +207,7 @@ describe('findStateErrors function', () => {
                 horizontal: true,
                 origin: [0, 5],
             }],
-            history: [],
+            moves: [],
         };
         const errors = findStateErrors(level, state, [mq, carA, truck]);
         expect(errors).toHaveLength(0);
@@ -223,7 +223,7 @@ describe('findStateErrors function', () => {
                 horizontal: true,
                 origin: [3, 2],
             }],
-            history: [],
+            moves: [],
         };
 
         const errors = findStateErrors(level, state, [mq, carA]).find(e => e.car === 'A')?.errors ?? [];
@@ -240,7 +240,7 @@ describe('findStateErrors function', () => {
                 horizontal: false,
                 origin: [3, 1],
             }],
-            history: [],
+            moves: [],
         };
         const errors = findStateErrors(level, state, [mq, carA]).find(e => e.car === 'A')?.errors ?? [];
         expect(errors).toContain(`car 'A' would collide with car 'X'`);
