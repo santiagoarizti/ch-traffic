@@ -16,15 +16,13 @@ const squares = computed(() => {
     const squares = [];
     for (let y = 0; y < size.value[1]; y++) {
         for (let x = 0; x < size.value[0]; x++) {
-            squares.push({
-                x, y,
-            });
+            squares.push({x, y});
         }
     }
     return squares;
 });
 
-const cars = computed(() => game.level?.carsPositions ?? []);
+const cars = computed(() => game.currentState?.carsPositions ?? []);
 
 </script>
 
@@ -34,7 +32,8 @@ const cars = computed(() => game.level?.carsPositions ?? []);
         <TrafficGridCell
             v-for="(s, i) of squares"
             :key="i"
-            :square="s"
+            :x="s.x"
+            :y="s.y"
             :index="i"
         />
 
@@ -55,6 +54,9 @@ const cars = computed(() => game.level?.carsPositions ?? []);
     display: grid;
     grid-template-columns: repeat(v-bind('size[0]'), 1fr);
     grid-template-rows: repeat(v-bind('size[1]'), 1fr);
+
+    /* we will be handling the drag/drop stuff from an outside container */
+    pointer-events: none;
 }
 
 </style>

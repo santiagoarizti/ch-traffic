@@ -20,23 +20,40 @@ export const useGameStore = defineStore('game', () => {
 
     const level = computed<GameLevel|undefined>(() => levels.value.find(l => l.id === activeLevelId.value));
 
-    const state = ref<LevelSnapshot[]>();
+    const history = ref<LevelSnapshot[]>();
 
     // when the level changes, reset the progress
-    watch(level, v => {
-        state.value = v ? [{
-            carsPositions: v.carsPositions,
+    watch(level, () => resetLevel());
+
+    const currentState = computed(() => history.value?.at(-1));
+
+    /**
+     * load a level (or reset the current one
+     */
+    function loadLevel(id: number) {
+        if (activeLevelId.value === id) {
+            resetLevel();
+        } else {
+            activeLevelId.value = id;
+        }
+    }
+
+    function resetLevel() {
+        history.value = level.value ? [{
+            carsPositions: level.value.carsPositions,
             moves: [],
         }] : undefined;
-    });
-
-
-    function loadLevel(id: number) {
-        activeLevelId.value = id;
     }
 
     function makeMove(move: Move) {
-    //     applyMove();
+        if (currentState.value) {
+            try {
+                const newState = applyMove(currentState.value, move);
+                history.value?.push(newState);
+            } catch (error) {
+                console.error(error);
+            }
+        }
     }
 
     return {
@@ -44,6 +61,7 @@ export const useGameStore = defineStore('game', () => {
         levels,
         // getters
         level,
+        currentState,
         // actions
         initStandardLevels,
         loadLevel,

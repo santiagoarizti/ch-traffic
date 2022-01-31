@@ -2,6 +2,9 @@
 import {computed} from 'vue';
 import {CarPosition} from '@/lib/levels';
 import {cars} from '@/lib/cars';
+import {useGameSettingsStore} from '@/stores/gameSettings';
+
+const settings = useGameSettingsStore();
 
 const props = defineProps<{
     car: CarPosition,
@@ -20,7 +23,14 @@ const gridRowStart = computed(() => props.car.origin[1] + 1);
 <template>
     <span
         class="moving-car"
-    />
+    >
+        <span
+            v-if="settings.showSolution"
+            class="car-label"
+        >
+            {{ car.car }}
+        </span>
+    </span>
 </template>
 
 <style scoped>
@@ -31,5 +41,14 @@ const gridRowStart = computed(() => props.car.origin[1] + 1);
     grid-column-end: span v-bind(width);
     grid-row-start: v-bind(gridRowStart);
     grid-row-end: span v-bind(height);
+    /* for the label shown sometimes */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.car-label {
+    font-size: 4rem;
+    line-height: 4rem;
+    text-shadow: var(--vt-c-black) 0.1rem 0.1rem 0.2rem
 }
 </style>

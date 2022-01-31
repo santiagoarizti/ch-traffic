@@ -5,15 +5,17 @@ import {useGameSettingsStore} from '@/stores/gameSettings';
 
 const props = defineProps<{
     /** location of this square in the grid */
-    square: {x: number, y: number},
+    x: number,
+    /** location of this square in the grid */
+    y: number,
     /** index of this square in the grid */
     index: number,
 }>();
 
 const settings = useGameSettingsStore();
 
-const gridRowStart = computed(() => props.square.y + 1);
-const gridColumnStart = computed(() => props.square.x + 1);
+const gridRowStart = computed(() => props.y + 1);
+const gridColumnStart = computed(() => props.x + 1);
 </script>
 
 <template>
@@ -22,7 +24,7 @@ const gridColumnStart = computed(() => props.square.x + 1);
     >
         <span v-if="settings.showCoordenates">
             {{index}}<br>
-            ({{square.x}}, {{square.y}})
+            ({{x}}, {{y}})
         </span>
     </span>
 </template>
