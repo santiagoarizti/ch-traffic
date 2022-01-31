@@ -23,6 +23,19 @@ import level19 from '@/assets/levels/level19';
 import level20 from '@/assets/levels/level20';
 import level21 from '@/assets/levels/level21';
 import level22 from '@/assets/levels/level22';
+import level23 from '@/assets/levels/level23';
+import level24 from '@/assets/levels/level24';
+import level25 from '@/assets/levels/level25';
+import level26 from '@/assets/levels/level26';
+import level27 from '@/assets/levels/level27';
+import level28 from '@/assets/levels/level28';
+import level29 from '@/assets/levels/level29';
+import level30 from '@/assets/levels/level30';
+import level31 from '@/assets/levels/level31';
+import level32 from '@/assets/levels/level32';
+import level33 from '@/assets/levels/level33';
+import level34 from '@/assets/levels/level34';
+import level35 from '@/assets/levels/level35';
 
 
 export function getStandardLevels(): GameLevel[] {
@@ -50,6 +63,19 @@ export function getStandardLevels(): GameLevel[] {
         level20,
         level21,
         level22,
+        level23,
+        level24,
+        level25,
+        level26,
+        level27,
+        level28,
+        level29,
+        level30,
+        level31,
+        level32,
+        level33,
+        level34,
+        level35,
     ];
 
     const gameLevels: GameLevel[] = [];
