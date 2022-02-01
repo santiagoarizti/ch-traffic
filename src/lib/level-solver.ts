@@ -139,8 +139,8 @@ export function findStateErrors(
             const [px1, py1, px2, py2] = getBoundingBox(pcar, prev);
 
             if ( // see how I compare 1 vs 2 and 2 vs 1, that is how to collide.
-                x1 <= px2 && x2 >= px1 && // overlapping x coordenates
-                y1 <= py2 && y2 >= py1 // overlapping y coordenates
+                x1 <= px2 && x2 >= px1 && // overlapping x coordinates
+                y1 <= py2 && y2 >= py1 // overlapping y coordinates
             ) {
                 carErrors.push(`car '${pos.car}' would collide with car '${prev.car}'`);
             }

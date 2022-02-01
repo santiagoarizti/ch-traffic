@@ -127,7 +127,7 @@ export function parseRawLevelBody(body: string, cars: Car[]): ParsedLevel {
                 posMap.set(car.code, {
                     car: car.code,
                     horizontal,
-                    origin: [i, l], // our coordenates must be the origin, because we are at "else" block.
+                    origin: [i, l], // our coordinates must be the origin, because we are at "else" block.
                 });
             }
         }

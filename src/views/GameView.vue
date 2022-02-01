@@ -4,8 +4,8 @@ import TrafficGrid from '@/components/TrafficGrid.vue';
 import {useGameStore} from '@/stores/game';
 import LevelSelector from '@/components/LevelSelector.vue';
 import SolutionNavigator from '@/components/SolutionNavigator.vue';
-import { useGameSettingsStore } from '@/stores/gameSettings';
-import { useMouseStore } from '@/stores/mouse';
+import {useGameSettingsStore} from '@/stores/gameSettings';
+import {useMouseStore} from '@/stores/mouse';
 
 const store = useGameStore();
 const settings = useGameSettingsStore();
@@ -28,9 +28,9 @@ store.initStandardLevels();
 
     <div v-if="settings.showMouseDebug">
         <h3>Debug</h3>
-        Selected car: {{ mouse.selectedCar }}<br>
-        Current location: __<br>
-        Hover location: __<br>
+        Selected car: {{ mouse.selectedPos ? mouse.selectedPos : '__' }}
+        <br>
+        Hover location: {{ mouse.activeCell || '__' }}<br>
         Is new location valid: __<br>
     </div>
 

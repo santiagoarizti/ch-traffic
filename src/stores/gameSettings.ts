@@ -6,8 +6,8 @@ export const useGameSettingsStore = defineStore('game-settings', () => {
     /** in pixels, to know how big to render the grid. */
     const squareSize = ref(80);
 
-    /** should we show game coordenates (perhaps this is too debuggy) */
-    const showCoordenates = ref(false);
+    /** should we show game coordinates (perhaps this is too debuggy) */
+    const showCoordinates = ref(false);
 
     /** show the event fires of mouse stuff, plus show the selected car */
     const showMouseDebug = ref(true);
@@ -17,7 +17,7 @@ export const useGameSettingsStore = defineStore('game-settings', () => {
 
     return {
         squareSize,
-        showCoordenates,
+        showCoordinates,
         showMouseDebug,
         showSolution,
     };

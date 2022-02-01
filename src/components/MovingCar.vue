@@ -3,13 +3,16 @@ import {computed} from 'vue';
 import {CarPosition} from '@/lib/levels';
 import {cars} from '@/lib/cars';
 import {useGameSettingsStore} from '@/stores/gameSettings';
-import { useMouseStore } from '@/stores/mouse';
+import {useMouseStore} from '@/stores/mouse';
 
 const settings = useGameSettingsStore();
 const mouse = useMouseStore();
 
 const props = defineProps<{
+    /** enough information to know where to render the car and which direction and color */
     car: CarPosition,
+    /** only true when this is the floaty car that is being displayed as the user clicks */
+    floating?: boolean,
 }>();
 
 const theCar = computed(() => cars.find(c => props.car.car === c.code)!);
@@ -20,22 +23,15 @@ const height = computed(() => props.car.horizontal ? 1 : theCar.value.size);
 const gridColumnStart = computed(() => props.car.origin[0] + 1);
 const gridRowStart = computed(() => props.car.origin[1] + 1);
 
-// the mouse up event will be handled higher up
-function onMousedown(e: MouseEvent) {
-    // we don't want to trigger browser drag/drop
-    e.preventDefault();
-    mouse.selectCar(props.car.car);
-}
-
-const isSelected = computed(() => mouse.selectedCar === props.car.car);
+const selectedClass = computed(() => !props.floating && mouse.selectedPos?.car === props.car.car);
+const hoveredClass = computed(() => !props.floating && mouse.hoveredPos?.car === props.car.car);
 
 </script>
 
 <template>
     <span
         class="moving-car"
-        :class="{'moving-car--selected': isSelected}"
-        @mousedown.exact="onMousedown"
+        :class="{'moving-car--selected': selectedClass, 'moving-car--hovered': hoveredClass}"
     >
         <span
             v-if="settings.showSolution"
@@ -60,10 +56,13 @@ const isSelected = computed(() => mouse.selectedCar === props.car.car);
     align-items: center;
 
     /* we will be handling the drag/drop stuff from an outside container */
-    cursor: pointer;
+    pointer-events: none;
+}
+.moving-car--hovered {
+    opacity: 0.75;
 }
 .moving-car--selected {
-    opacity: 0.5
+    opacity: 0.5;
 }
 .car-label {
     font-size: 4rem;

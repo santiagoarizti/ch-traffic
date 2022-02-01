@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useGameStore} from '@/stores/game';
 import {useGameSettingsStore} from '@/stores/gameSettings';
-import { useMouseStore } from '@/stores/mouse';
+import {useMouseStore} from '@/stores/mouse';
 import {computed} from 'vue';
 import MovingCar from './MovingCar.vue';
 import TrafficGridCell from './TrafficGridCell.vue';
@@ -31,6 +31,7 @@ function onMouseup() {
 }
 function onMouseleave() {
     mouse.clearSelection();
+    mouse.clearActiveCell();
 }
 
 </script>
@@ -41,7 +42,6 @@ function onMouseleave() {
         @mouseup="onMouseup"
         @mouseleave="onMouseleave"
     >
-
         <TrafficGridCell
             v-for="(s, i) of squares"
             :key="i"
@@ -55,6 +55,12 @@ function onMouseleave() {
             :key="car.car"
             :car="car"
         />
+
+        <!--<MovingCar
+            v-if="mouse.selectedPos"
+            :car="mouse.selectedPos"
+            floating
+        />-->
     </div>
 </template>
 
