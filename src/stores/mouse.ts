@@ -1,5 +1,5 @@
 import {CarCode, cars} from '@/lib/cars';
-import {getBoundingBox} from '@/lib/level-solver';
+import {generateMoveFromDiff, getBoundingBox, tryMove} from '@/lib/level-solver';
 import {CarPosition, Move} from '@/lib/levels';
 import {defineStore} from 'pinia';
 import {ref, computed, watch} from 'vue';
@@ -48,7 +48,13 @@ export const useMouseStore = defineStore('mouse', () => {
 
     /** should be displayed under the mouse when in the middle of a move */
     const stagedCar = computed((): CarPosition|undefined => {
-        if (selectedPos.value && hoverCell.value && deltaOnClick.value) {
+        if (
+            selectedPos.value &&
+            hoverCell.value &&
+            deltaOnClick.value &&
+            game.level &&
+            game.currentState
+        ) {
             const [ox, oy] = selectedPos.value.origin;
 
             // we need to consider the delta of actual origin minus active cell.
@@ -56,11 +62,24 @@ export const useMouseStore = defineStore('mouse', () => {
             const x = h ? hoverCell.value[0] - deltaOnClick.value[0] : ox;
             const y = h ? oy : hoverCell.value[1] - deltaOnClick.value[1];
 
-            return {
+            const thePos: CarPosition = {
                 car: selectedPos.value.car,
                 horizontal: h,
                 origin: [x, y],
             };
+        
+            const move = generateMoveFromDiff(thePos, selectedPos.value);
+            if (move) {
+                try {
+                    // this was just to verify if the new move would be valid
+                    tryMove(game.level, game.currentState, cars, move);
+                    return thePos;
+                } catch (error) {
+                    // error is not used for now, it is the explanation of why the move fails, just return
+                    // the previous valid move
+                    return selectedPos.value;
+                }
+            }
         }
         return undefined;
     });

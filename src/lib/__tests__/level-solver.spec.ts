@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it} from "vitest";
 import {Car} from "../cars";
-import {applyMove, isLevelBeat, findStateErrors, LevelSnapshot, testLevelSolution, getBoundingBox} from "../level-solver";
+import {applyMove, isLevelBeat, findStateErrors, LevelSnapshot, testLevelSolution, getBoundingBox, generateMoveFromDiff} from "../level-solver";
 import {CarPosition, Move, ParsedLevel} from "../levels";
 
 const carA: Car = {
@@ -294,5 +294,36 @@ describe('function testLevelSolution', () => {
         const solution: Move[] = ['AD6', 'XR6'];
 
         expect(() => testLevelSolution(level, solution, [carA, mq])).toThrowError(`invalid solution (0: AD6): car 'A' is out of bounds`);
+    });
+});
+
+describe('generateMoveFromDiff function', () => {
+    it('calculates move between two points', () => {
+        const oldPos: CarPosition = {
+            car: 'X',
+            horizontal: true,
+            origin: [0, 0],
+        };
+        const newPos: CarPosition = {
+            car: 'X',
+            horizontal: true,
+            origin: [3, 0],
+        };
+        const move = generateMoveFromDiff(newPos, oldPos);
+        expect(move).toEqual('XR3');
+    });
+    it('calculates non-move', () => {
+        const oldPos: CarPosition = {
+            car: 'X',
+            horizontal: true,
+            origin: [0, 0],
+        };
+        const newPos: CarPosition = {
+            car: 'X',
+            horizontal: true,
+            origin: [0, 0],
+        };
+        const move = generateMoveFromDiff(newPos, oldPos);
+        expect(move).toBeUndefined();
     });
 });

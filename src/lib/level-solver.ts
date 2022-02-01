@@ -25,6 +25,9 @@ const dirMap: {[dir: string]: [x: -1|0|1, y: -1|0|1]} = {
     L: [-1, 0],
 };
 
+/** function that will apply a move as long as the syntax of the move is ok and the
+ * car exists to move, it will not check for collisions or oob
+ * returns the new state of the provided level */
 export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
     if (!isValidMoveSyntax(move)) {
         // this can happen in a typo during importing levels from physical cards.
@@ -65,6 +68,22 @@ export function applyMove(state: LevelSnapshot, move: Move): LevelSnapshot {
         carsPositions: newPositions,
         moves: [...state.moves, move],
     };
+}
+
+/** similar to applyMove, but will fail if the move provided is an invalid move considering
+ * the rest of the cars in the board and collisions with grid bounds */
+export function tryMove(
+    level: ParsedLevel,
+    state: LevelSnapshot,
+    cars: Car[],
+    move: Move,
+): LevelSnapshot {
+    const newState = applyMove(state, move);
+    const errors = findStateErrors(level, newState, cars);
+    if (errors.length > 0) {
+        throw new Error(errors[0]!.errors[0]);
+    }
+    return newState;
 }
 
 /**
@@ -196,4 +215,20 @@ export function testLevelSolution(level: ParsedLevel, solution: Move[], cars: Ca
     if (!isLevelBeat(level, state.at(-1)!)) {
         throw new Error('solution provided cannot solve the puzzle');
     }
+}
+
+/** calculate a Move based on two CarPositions */
+export function generateMoveFromDiff(newPos: CarPosition, oldPos: CarPosition): Move|undefined {
+    // todo: extract these lines to function and unit-test
+    const h = newPos.horizontal;
+    const xory = h ? 0 : 1; // x or y
+    const diff = newPos.origin[xory] - oldPos.origin[xory];
+    const dir = h ? (diff > 0 ? 'R' : 'L') : (diff > 0 ? 'D' : 'U');
+    const am = Math.abs(diff); // move amount, remove sign because UDRL
+    // don't commit the move if the amount moved was zero!
+    if (am > 0) {
+        const move: Move = `${newPos.car}${dir}${am}`;
+        return move;
+    }
+    return undefined;
 }
