@@ -1,6 +1,6 @@
 import {CarCode, cars} from '@/lib/cars';
 import {getBoundingBox} from '@/lib/level-solver';
-import {CarPosition} from '@/lib/levels';
+import {CarPosition, Move} from '@/lib/levels';
 import {defineStore} from 'pinia';
 import {ref, computed, watch} from 'vue';
 import {useGameStore} from './game';
@@ -76,18 +76,39 @@ export const useMouseStore = defineStore('mouse', () => {
         }
     });
 
+    /** called when a cell is clicked. the currently hovered car is marked as selected.
+     * if not, just mark undefined, it is ok */
     function selectHoveredCar() {
         selectedCar.value = hoveredCar.value;
     }
 
-    function clearSelection() {
+    /** called when user is finished and wants to make the move */
+    function commitSelection() {
+        if (stagedCar.value && selectedPos.value) {
+
+            // todo: extract these lines to function and unit-test
+            const h = stagedCar.value.horizontal;
+            const xory = h ? 0 : 1; // x or y
+            const diff = stagedCar.value.origin[xory] - selectedPos.value.origin[xory];
+            const dir = h ? (diff > 0 ? 'R' : 'L') : (diff > 0 ? 'D' : 'U');
+            const am = Math.abs(diff); // move amount, remove sign because UDRL
+            // don't commit the move if the amount moved was zero!
+            if (am > 0) {
+                const move: Move = `${stagedCar.value.car}${dir}${am}`;
+                game.makeMove(move);
+            }
+        }
+        // reset the car now that all went OK
         selectedCar.value = undefined;
     }
 
-    function clearHoverCell() {
+    /** called when user wants to cancel the action, such as exit screen */
+    function clearSelection() {
+        selectedCar.value = undefined;
         hoverCell.value = undefined;
     }
 
+    /** called when the mouse is actively moving from one cell to another in hover state */
     function reportCoordinates(x: number, y: number) {
         hoverCell.value = [x, y];
     }
@@ -102,7 +123,7 @@ export const useMouseStore = defineStore('mouse', () => {
         // actions
         selectHoveredCar,
         clearSelection,
-        clearHoverCell,
+        commitSelection,
         reportCoordinates,
     };
 });

@@ -27,11 +27,10 @@ const squares = computed(() => {
 const cars = computed(() => game.currentState?.carsPositions ?? []);
 
 function onMouseup() {
-    mouse.clearSelection();
+    mouse.commitSelection();
 }
 function onMouseleave() {
     mouse.clearSelection();
-    mouse.clearHoverCell();
 }
 
 </script>
