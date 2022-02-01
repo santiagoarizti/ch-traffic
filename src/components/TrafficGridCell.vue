@@ -28,6 +28,17 @@ function onMousedown(e: MouseEvent) {
     e.preventDefault(); // avoid native drag/drop
     mouse.selectHoveredCar();
 }
+
+function onTouchstart(e: TouchEvent) {
+    e.preventDefault(); // attempt to prevent scroll
+    mouse.reportCoordinates(props.x, props.y);
+    mouse.selectHoveredCar();
+}
+
+function onTouchmove() {
+    // todo: me quedé aquí, no parece funcionar
+    mouse.reportCoordinates(props.x, props.y);
+}
 </script>
 
 <template>
@@ -35,6 +46,8 @@ function onMousedown(e: MouseEvent) {
         class="tg-square"
         @mouseenter="onMouseenter"
         @mousedown="onMousedown"
+        @touchstart="onTouchstart"
+        @touchmove="onTouchmove"
     >
         <span v-if="settings.showCoordinates">
             {{index}}<br>

@@ -69,7 +69,7 @@ export const useMouseStore = defineStore('mouse', () => {
                 horizontal: h,
                 origin: [x, y],
             };
-        
+
             const move = generateMoveFromDiff(thePos, selectedPos.value);
             if (move) {
                 try {
@@ -131,7 +131,14 @@ export const useMouseStore = defineStore('mouse', () => {
 
     /** called when the mouse is actively moving from one cell to another in hover state */
     function reportCoordinates(x: number, y: number) {
-        hoverCell.value = [x, y];
+        if (
+            !hoverCell.value ||
+            hoverCell.value[0] !== x ||
+            hoverCell.value[1] !== y
+        ) {
+            // prevent duplicate reacting on touchmove
+            hoverCell.value = [x, y];
+        }
     }
 
     return {
