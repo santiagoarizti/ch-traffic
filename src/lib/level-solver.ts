@@ -174,12 +174,16 @@ export function findStateErrors(
 }
 
 /** return true when level is in a win condition */
-export function isLevelBeat(level: ParsedLevel, state: LevelSnapshot) {
+export function isLevelBeat(level: ParsedLevel, state: LevelSnapshot, cars: Car[]) {
     if (level.exit) {
         const [line, car] = level.exit;
         const pos = state.carsPositions.find(p => p.car === car);
-        if (pos?.origin[1] === line && pos?.origin[0] >= level.size[0]) {
-            return true;
+        const theCar = cars.find(c => c.code === car);
+        if (theCar && pos) {
+            const compareX = pos.origin[0] + theCar.size;
+            if (pos.origin[1] === line && compareX >= level.size[0]) {
+                return true;
+            }
         }
     }
 
@@ -212,7 +216,7 @@ export function testLevelSolution(level: ParsedLevel, solution: Move[], cars: Ca
         state.push(newState);
     }
 
-    if (!isLevelBeat(level, state.at(-1)!)) {
+    if (!isLevelBeat(level, state.at(-1)!, cars)) {
         throw new Error('solution provided cannot solve the puzzle');
     }
 }

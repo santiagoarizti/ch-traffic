@@ -10,7 +10,7 @@ export const useGameSettingsStore = defineStore('game-settings', () => {
     const showCoordinates = ref(false);
 
     /** show the event fires of mouse stuff, plus show the selected car */
-    const showMouseDebug = ref(true);
+    const showMouseDebug = ref(false);
 
     /** should we display the letter codes in cars and show the solution? */
     const showSolution = ref(false);

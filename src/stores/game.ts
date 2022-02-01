@@ -1,5 +1,6 @@
+import { cars } from '@/lib/cars';
 import {getStandardLevels} from '@/lib/level-loader';
-import {applyMove, LevelSnapshot} from '@/lib/level-solver';
+import {applyMove, isLevelBeat, LevelSnapshot, tryMove} from '@/lib/level-solver';
 import {GameLevel, Move} from '@/lib/levels';
 import {defineStore} from 'pinia';
 import {ref, computed, watch} from 'vue';
@@ -45,10 +46,13 @@ export const useGameStore = defineStore('game', () => {
     }
 
     function makeMove(move: Move) {
-        if (currentState.value) {
+        if (currentState.value && level.value) {
             try {
-                const newState = applyMove(currentState.value, move);
+                const newState = tryMove(level.value, currentState.value, cars, move);
                 history.value?.push(newState);
+                if (isLevelBeat(level.value, newState, cars)) {
+                    alert('You win :)');
+                }
             } catch (error) {
                 console.error(error);
             }

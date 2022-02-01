@@ -48,7 +48,7 @@ describe('function isLevelBeat', () => {
             }],
             moves: [],
         };
-        const isBeat = isLevelBeat(level, state);
+        const isBeat = isLevelBeat(level, state, [mq]);
         expect(isBeat).toBeTruthy();
     });
     it('knows when level is not beat', () => {
@@ -60,8 +60,20 @@ describe('function isLevelBeat', () => {
             }],
             moves: [],
         };
-        const isBeat = isLevelBeat(level, state);
+        const isBeat = isLevelBeat(level, state, [mq]);
         expect(isBeat).toBeFalsy();
+    });
+    it('knows when level is barely beat', () => {
+        const state: LevelSnapshot = {
+            carsPositions: [{
+                car: 'X',
+                horizontal: true,
+                origin: [4, 2],
+            }],
+            moves: [],
+        };
+        const isBeat = isLevelBeat(level, state, [mq]);
+        expect(isBeat).toBeTruthy();
     });
 });
 
