@@ -14,16 +14,16 @@ const mouse = useMouseStore();
 // size of playable level, this determines the area where cars will be rendered
 const size = computed<[number, number]>(() => game.level?.size ?? [4, 4]);
 
-const exitCar = computed((): Car|undefined => cars.find(c => c.code === game.level?.exit?.[1]));
-
 // this size accounts for the space that needs to be outside of the grid to allow for the winning car
 const sizeExtra = computed(() => {
-    const extra = exitCar.value?.size ?? 0;
-    return [size.value[0] + extra, size.value[1]];
+    return [size.value[0] + 1, size.value[1]];
 });
 
-// size in pixels based on squareSize
-const gridSize = computed(() => sizeExtra.value.map(s => s * settings.squareSize));
+// size in pixels based on squareSize (ignored on smaller screens)
+const gridSize = computed(() => sizeExtra.value.map(s => s * settings.squareSize) as [number, number]);
+
+// width to height ratio. because of the padding-top hack, we need to know the height in terms of the width
+const whRatio = computed(() => Math.floor(100 * gridSize.value[1] / gridSize.value[0]) + '%');
 
 // these are the grid squares that trigger mouse events
 const squares = computed(() => {
@@ -35,12 +35,10 @@ const squares = computed(() => {
         }
     }
     // add a couple extra grid cells for the exit car
-    if (exitCar.value && game.level?.exit) {
-        for (let i = 0; i < exitCar.value.size; i++) {
-            const x = size.value[0] + i;
-            const y = game.level.exit[0];
-            squares.push({x, y});
-        }
+    if (game.level?.exit) {
+        const x = size.value[0];
+        const y = game.level.exit[0];
+        squares.push({x, y});
     }
     return squares;
 });
@@ -64,33 +62,50 @@ function onMouseleave() {
         @mouseup="onMouseup"
         @mouseleave="onMouseleave"
     >
-        <TrafficGridCell
-            v-for="(s, i) of squares"
-            :key="i"
-            :x="s.x"
-            :y="s.y"
-            :index="i"
-        />
+        <div class="cnt1">
+            <div class="cnt2">
+                <TrafficGridCell
+                    v-for="(s, i) of squares"
+                    :key="i"
+                    :x="s.x"
+                    :y="s.y"
+                    :index="i"
+                />
 
-        <MovingCar
-            v-for="pos of positions"
-            :key="pos.car"
-            :car="pos"
-        />
+                <MovingCar
+                    v-for="pos of positions"
+                    :key="pos.car"
+                    :car="pos"
+                />
 
-        <MovingCar
-            v-if="mouse.stagedCar"
-            :car="mouse.stagedCar"
-            floating
-        />
+                <MovingCar
+                    v-if="mouse.stagedCar"
+                    :car="mouse.stagedCar"
+                    floating
+                />
+            </div>
+        </div>
     </div>
 </template>
 
 <style>
 .traffic-grid {
-    background-color: var(--color-background-soft);
-    width: v-bind("`${gridSize[0]}px`");
-    height: v-bind("`${gridSize[1]}px`");
+    /* width: v-bind("`${gridSize[0]}px`"); */
+    /*height: v-bind("`${gridSize[1]}px`");*/
+    max-width: v-bind("`${gridSize[0]}px`");
+    width: 100%;
+}
+.cnt1 {
+    width: 100%;
+    padding-top: v-bind(whRatio);
+    position: relative;
+}
+.cnt2 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 
     display: grid;
     grid-template-columns: repeat(v-bind('sizeExtra[0]'), 1fr);

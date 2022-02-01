@@ -45,6 +45,7 @@ function onMousedown(e: MouseEvent) {
 
 <style scoped>
 .tg-square {
+    background-color: var(--color-background-soft);
     border: 1px solid var(--color-border);
     grid-column-start: v-bind(gridColumnStart);
     grid-column-end: span 1;
