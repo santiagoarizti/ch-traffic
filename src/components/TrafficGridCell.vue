@@ -50,5 +50,7 @@ function onMousedown(e: MouseEvent) {
     grid-column-end: span 1;
     grid-row-start: v-bind(gridRowStart);
     grid-row-end: span 1;
+    /** ha a lot of mouse events, make sure touch can see them */
+    cursor: pointer;
 }
 </style>

@@ -4,12 +4,10 @@ import TrafficGrid from '@/components/TrafficGrid.vue';
 import {useGameStore} from '@/stores/game';
 import LevelSelector from '@/components/LevelSelector.vue';
 import SolutionNavigator from '@/components/SolutionNavigator.vue';
-import {useGameSettingsStore} from '@/stores/gameSettings';
-import {useMouseStore} from '@/stores/mouse';
+import HistoryNavigator from '@/components/HistoryNavigator.vue';
+import DebugInfo from '@/components/DebugInfo.vue';
 
 const store = useGameStore();
-const settings = useGameSettingsStore();
-const mouse = useMouseStore();
 
 // load the standard levels into the store.
 store.initStandardLevels();
@@ -26,14 +24,8 @@ store.initStandardLevels();
         <TrafficGrid />
     </div>
 
-    <div v-if="settings.showMouseDebug">
-        <h3>Debug</h3>
-        Selected car: {{ mouse.selectedPos ? mouse.selectedPos : '__' }}
-        <br>
-        Hover location: {{ mouse.activeCell || '__' }}<br>
-        Is new location valid: __<br>
-    </div>
-
+    <DebugInfo />
+    <HistoryNavigator />
     <SolutionNavigator />
 </div>
 </template>
