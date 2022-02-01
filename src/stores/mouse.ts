@@ -46,6 +46,8 @@ export const useMouseStore = defineStore('mouse', () => {
         return game.currentState?.carsPositions.find(p => p.car === hoveredCar.value);
     });
 
+
+
     /** should be displayed under the mouse when in the middle of a move */
     const stagedCar = computed((): CarPosition|undefined => {
         if (
@@ -77,7 +79,7 @@ export const useMouseStore = defineStore('mouse', () => {
                 } catch (error) {
                     // error is not used for now, it is the explanation of why the move fails, just return
                     // the previous valid move
-                    return selectedPos.value;
+                    return stagedCar.value; // recursive call, expect previous value
                 }
             }
         }
