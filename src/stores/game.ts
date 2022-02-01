@@ -1,6 +1,6 @@
-import { cars } from '@/lib/cars';
+import {cars} from '@/lib/cars';
 import {getStandardLevels} from '@/lib/level-loader';
-import {applyMove, isLevelBeat, LevelSnapshot, tryMove} from '@/lib/level-solver';
+import {isLevelBeat, LevelSnapshot, tryMove} from '@/lib/level-solver';
 import {GameLevel, Move} from '@/lib/levels';
 import {defineStore} from 'pinia';
 import {ref, computed, watch} from 'vue';

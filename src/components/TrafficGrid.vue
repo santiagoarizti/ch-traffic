@@ -5,27 +5,50 @@ import {useMouseStore} from '@/stores/mouse';
 import {computed} from 'vue';
 import MovingCar from './MovingCar.vue';
 import TrafficGridCell from './TrafficGridCell.vue';
+import {cars, Car} from '@/lib/cars';
 
 const game = useGameStore();
 const settings = useGameSettingsStore();
 const mouse = useMouseStore();
 
+// size of playable level, this determines the area where cars will be rendered
 const size = computed<[number, number]>(() => game.level?.size ?? [4, 4]);
 
-const gridSize = computed(() => size.value.map(s => s * settings.squareSize));
+const exitCar = computed((): Car|undefined => cars.find(c => c.code === game.level?.exit?.[1]));
 
+// this size accounts for the space that needs to be outside of the grid to allow for the winning car
+const sizeExtra = computed(() => {
+    const extra = exitCar.value?.size ?? 0;
+    return [size.value[0] + extra, size.value[1]];
+});
+
+// size in pixels based on squareSize
+const gridSize = computed(() => sizeExtra.value.map(s => s * settings.squareSize));
+
+// these are the grid squares that trigger mouse events
 const squares = computed(() => {
     const squares = [];
+    // normal squares for game
     for (let y = 0; y < size.value[1]; y++) {
         for (let x = 0; x < size.value[0]; x++) {
+            squares.push({x, y});
+        }
+    }
+    // add a couple extra grid cells for the exit car
+    if (exitCar.value && game.level?.exit) {
+        for (let i = 0; i < exitCar.value.size; i++) {
+            const x = size.value[0] + i;
+            const y = game.level.exit[0];
             squares.push({x, y});
         }
     }
     return squares;
 });
 
-const cars = computed(() => game.currentState?.carsPositions ?? []);
+// cars catalog
+const positions = computed(() => game.currentState?.carsPositions ?? []);
 
+// global handlers to reset some stuff, todo: move to better place
 function onMouseup() {
     mouse.commitSelection();
 }
@@ -50,9 +73,9 @@ function onMouseleave() {
         />
 
         <MovingCar
-            v-for="car of cars"
-            :key="car.car"
-            :car="car"
+            v-for="pos of positions"
+            :key="pos.car"
+            :car="pos"
         />
 
         <MovingCar
@@ -70,8 +93,8 @@ function onMouseleave() {
     height: v-bind("`${gridSize[1]}px`");
 
     display: grid;
-    grid-template-columns: repeat(v-bind('size[0]'), 1fr);
-    grid-template-rows: repeat(v-bind('size[1]'), 1fr);
+    grid-template-columns: repeat(v-bind('sizeExtra[0]'), 1fr);
+    grid-template-rows: repeat(v-bind('sizeExtra[1]'), 1fr);
 }
 
 </style>
