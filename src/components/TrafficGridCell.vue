@@ -2,7 +2,7 @@
 
 import {computed} from 'vue';
 import {useGameSettingsStore} from '@/stores/gameSettings';
-import { useMouseStore } from '@/stores/mouse';
+import {useMouseStore} from '@/stores/mouse';
 
 const settings = useGameSettingsStore();
 const mouse = useMouseStore();

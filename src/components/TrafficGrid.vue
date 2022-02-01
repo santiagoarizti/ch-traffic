@@ -31,7 +31,7 @@ function onMouseup() {
 }
 function onMouseleave() {
     mouse.clearSelection();
-    mouse.clearActiveCell();
+    mouse.clearHoverCell();
 }
 
 </script>
@@ -56,11 +56,11 @@ function onMouseleave() {
             :car="car"
         />
 
-        <!--<MovingCar
-            v-if="mouse.selectedPos"
-            :car="mouse.selectedPos"
+        <MovingCar
+            v-if="mouse.stagedCar"
+            :car="mouse.stagedCar"
             floating
-        />-->
+        />
     </div>
 </template>
 

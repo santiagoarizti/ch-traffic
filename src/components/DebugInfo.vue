@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
-import { useGameSettingsStore } from '@/stores/gameSettings';
-import { useMouseStore } from '@/stores/mouse';
+import {useGameSettingsStore} from '@/stores/gameSettings';
+import {useMouseStore} from '@/stores/mouse';
 
 const settings = useGameSettingsStore();
 const mouse = useMouseStore();
@@ -13,7 +13,7 @@ const mouse = useMouseStore();
         <h3>Debug</h3>
         Selected car: {{ mouse.selectedPos ? mouse.selectedPos : '__' }}
         <br>
-        Hover location: {{ mouse.activeCell || '__' }}<br>
+        Hover location: {{ mouse.hoverCell || '__' }}<br>
         Is new location valid: __<br>
     </div>
 </template>
