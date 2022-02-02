@@ -65,8 +65,8 @@ const hoveredClass = computed(() => !props.floating && mouse.hoveredPos?.car ===
     opacity: 0.5;
 }
 .car-label {
-    font-size: 3rem;
-    line-height: 3rem;
+    font-size: 2.5rem;
+    line-height: 2.5rem;
     text-shadow: var(--vt-c-black) 0.1rem 0.1rem 0.2rem;
 }
 </style>

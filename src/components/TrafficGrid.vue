@@ -2,7 +2,7 @@
 import {useGameStore} from '@/stores/game';
 import {useGameSettingsStore} from '@/stores/gameSettings';
 import {useMouseStore} from '@/stores/mouse';
-import {computed, ref, onBeforeUpdate} from 'vue';
+import {computed, ref, onBeforeUpdate, onMounted} from 'vue';
 import MovingCar from './MovingCar.vue';
 import TrafficGridCell from './TrafficGridCell.vue';
 
@@ -27,6 +27,15 @@ const whRatio = computed(() => Math.floor(100 * gridSize.value[1] / gridSize.val
 // we need to find the cell elements to probe their location and find which cell is being touched,
 // this would be unnecessary with mouseenter but there is no equivalent event in touch api
 const cells = ref<InstanceType<typeof TrafficGridCell>[]>([]);
+const rects = computed(() => { // this shit is because touchmove doesn't trigger similar to mouseenter
+    const [sx, sy] = scroll.value; // scroll x and y, reactive now
+    return cells.value.map(c => {
+        const {x: rx, y: ry, width: rw, height: rh} = c.$el.getBoundingClientRect(); // rect x and y
+        const [x1, y1] = [rx + sx, ry + sy]; // getting the bounding box
+        const [x2, y2] = [x1 + rw, y1 + rh];
+        return {x: c.$props.x, y: c.$props.y, x1, y1, x2, y2};
+    });
+});
 
 // these are the grid squares that trigger mouse events
 const squares = computed(() => {
@@ -56,18 +65,11 @@ function onTouchend() { mouse.commitSelection(); }
 function onTouchcancel() { mouse.clearSelection(); }
 function onTouchmove(e: TouchEvent) { // this shit is because touchmove doesn't trigger similar to mouseenter
     const {pageX: tx, pageY: ty} = e.touches[0]!; // touch x and y
-    const {scrollTop: sy, scrollLeft: sx} = document.documentElement; // scroll x and y
-    for (const c of cells.value) {
-        if (c.$el instanceof HTMLElement) {
-            const {x: rx, y: ry, width: rw, height: rh} = c.$el.getBoundingClientRect(); // rect x and y
-            const [x1, y1] = [rx + sx, ry + sy]; // getting the bounding box
-            const [x2, y2] = [x1 + rw, y1 + rh];
-            // see if touch is currently above this cell.
-            if (tx >= x1 && tx <= x2 && ty >= y1 && ty <= y2) {
-                // see TrafficGridCell.vue::onMouseEnter for touch equivalent
-                mouse.reportCoordinates(c.$props.x, c.$props.y);
-                break;
-            }
+    for (const {x, y, x1, y1, x2, y2} of rects.value) {
+        if (tx >= x1 && tx <= x2 && ty >= y1 && ty <= y2) {
+            // see TrafficGridCell.vue::onMouseEnter for touch equivalent
+            mouse.reportCoordinates(x, y);
+            break;
         }
     }
 }
@@ -75,6 +77,15 @@ function onTouchmove(e: TouchEvent) { // this shit is because touchmove doesn't 
 // ugly hack. I have vue 3.2.29, but in vue3.2.25+ this is not supposed to be necessary :(
 onBeforeUpdate(() => cells.value = []);
 function onRef(c: InstanceType<typeof TrafficGridCell>) { cells.value.push(c); }
+
+// need to keep track of the scroll position
+const scroll = ref<[number, number]>([0, 0]);
+onMounted(() => {
+    document.addEventListener('scroll', () => {
+        const {scrollTop, scrollLeft} = document.documentElement;
+        scroll.value = [scrollLeft, scrollTop];
+    }, {passive: true});
+});
 
 </script>
 
