@@ -17,6 +17,7 @@ Tools still to be integrated:
 
 - vitepress
 - storybook + vite
+- prerender
 
 Things missing
 

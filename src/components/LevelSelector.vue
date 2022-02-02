@@ -9,7 +9,12 @@ const store = useGameStore();
 // just initial value
 const selectedLevel = ref(store.level?.id);
 
-function loadLevel() {
+function onClick() {
+    if (selectedLevel.value != null) {
+        store.loadLevel(selectedLevel.value);
+    }
+}
+function onChange() {
     if (selectedLevel.value != null) {
         store.loadLevel(selectedLevel.value);
     }
@@ -24,6 +29,7 @@ const disableSubmit = computed(() => selectedLevel.value == null);
         <label>
             <select
                 v-model.number="selectedLevel"
+                @change="onChange"
             >
                 <option disabled>
                     Select a level
@@ -39,10 +45,10 @@ const disableSubmit = computed(() => selectedLevel.value == null);
             </select>
         </label>
         <button
-            @click="loadLevel"
+            @click="onClick"
             :disabled="disableSubmit"
         >
-            load
+            Reset
         </button>
     </div>
 </template>

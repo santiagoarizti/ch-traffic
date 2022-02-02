@@ -35,7 +35,6 @@ function goToStep(move: Move) {
         </div>
         <div v-if="settings.showSolution">
             <div v-if="solutionSteps">
-                Solution steps:
                 <span
                     v-for="(ss, i) of solutionSteps"
                     :key="ss.move"

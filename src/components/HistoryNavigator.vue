@@ -16,7 +16,7 @@ function onClick(e: MouseEvent) {
 
 <template>
     <div>
-        Moves:
+        Moves:<br>
         <span v-if="history">
             <span
                 v-for="(move, i) of history"

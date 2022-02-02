@@ -95,7 +95,7 @@ function onRef(c: InstanceType<typeof TrafficGridCell>) { cells.value.push(c); }
                     :x="s.x"
                     :y="s.y"
                     :index="i"
-                    :ref="onRef"
+                    :ref="(onRef as any)"
                 />
 
                 <MovingCar
