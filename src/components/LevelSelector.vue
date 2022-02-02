@@ -22,7 +22,6 @@ const disableSubmit = computed(() => selectedLevel.value == null);
 <template>
     <div class="level-selector">
         <label>
-            Level select:
             <select
                 v-model.number="selectedLevel"
             >
@@ -51,7 +50,9 @@ const disableSubmit = computed(() => selectedLevel.value == null);
 <style scoped>
 
 .level-selector {
-
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 </style>

@@ -2,10 +2,9 @@
 import {useGameStore} from '@/stores/game';
 import {useGameSettingsStore} from '@/stores/gameSettings';
 import {useMouseStore} from '@/stores/mouse';
-import {computed} from 'vue';
+import {computed, ref, onBeforeUpdate} from 'vue';
 import MovingCar from './MovingCar.vue';
 import TrafficGridCell from './TrafficGridCell.vue';
-import {cars, Car} from '@/lib/cars';
 
 const game = useGameStore();
 const settings = useGameSettingsStore();
@@ -24,6 +23,10 @@ const gridSize = computed(() => sizeExtra.value.map(s => s * settings.squareSize
 
 // width to height ratio. because of the padding-top hack, we need to know the height in terms of the width
 const whRatio = computed(() => Math.floor(100 * gridSize.value[1] / gridSize.value[0]) + '%');
+
+// we need to find the cell elements to probe their location and find which cell is being touched,
+// this would be unnecessary with mouseenter but there is no equivalent event in touch api
+const cells = ref<InstanceType<typeof TrafficGridCell>[]>([]);
 
 // these are the grid squares that trigger mouse events
 const squares = computed(() => {
@@ -47,12 +50,31 @@ const squares = computed(() => {
 const positions = computed(() => game.currentState?.carsPositions ?? []);
 
 // global handlers to reset some stuff, todo: move to better place
-function onMouseup() {
-    mouse.commitSelection();
+function onMouseup() { mouse.commitSelection(); }
+function onMouseleave() { mouse.clearSelection(); }
+function onTouchend() { mouse.commitSelection(); }
+function onTouchcancel() { mouse.clearSelection(); }
+function onTouchmove(e: TouchEvent) { // this shit is because touchmove doesn't trigger similar to mouseenter
+    const {pageX: tx, pageY: ty} = e.touches[0]!; // touch x and y
+    const {scrollTop: sy, scrollLeft: sx} = document.documentElement; // scroll x and y
+    for (const c of cells.value) {
+        if (c.$el instanceof HTMLElement) {
+            const {x: rx, y: ry, width: rw, height: rh} = c.$el.getBoundingClientRect(); // rect x and y
+            const [x1, y1] = [rx + sx, ry + sy]; // getting the bounding box
+            const [x2, y2] = [x1 + rw, y1 + rh];
+            // see if touch is currently above this cell.
+            if (tx >= x1 && tx <= x2 && ty >= y1 && ty <= y2) {
+                // see TrafficGridCell.vue::onMouseEnter for touch equivalent
+                mouse.reportCoordinates(c.$props.x, c.$props.y);
+                break;
+            }
+        }
+    }
 }
-function onMouseleave() {
-    mouse.clearSelection();
-}
+
+// ugly hack. I have vue 3.2.29, but in vue3.2.25+ this is not supposed to be necessary :(
+onBeforeUpdate(() => cells.value = []);
+function onRef(c: InstanceType<typeof TrafficGridCell>) { cells.value.push(c); }
 
 </script>
 
@@ -61,6 +83,9 @@ function onMouseleave() {
         class="traffic-grid"
         @mouseup="onMouseup"
         @mouseleave="onMouseleave"
+        @touchend="onTouchend"
+        @touchmove="onTouchmove"
+        @touchcancel="onTouchcancel"
     >
         <div class="cnt1">
             <div class="cnt2">
@@ -70,6 +95,7 @@ function onMouseleave() {
                     :x="s.x"
                     :y="s.y"
                     :index="i"
+                    :ref="onRef"
                 />
 
                 <MovingCar
@@ -84,7 +110,15 @@ function onMouseleave() {
                     floating
                 />
             </div>
+            <div
+                v-if="game.levelBeat"
+                class="win-msg"
+                @touchstart.prevent.stop
+            >
+                <span>You win! :)</span>
+            </div>
         </div>
+
     </div>
 </template>
 
@@ -102,14 +136,27 @@ function onMouseleave() {
 }
 .cnt2 {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    top: 0; right: 0; bottom: 0; left: 0;
 
     display: grid;
     grid-template-columns: repeat(v-bind('sizeExtra[0]'), 1fr);
     grid-template-rows: repeat(v-bind('sizeExtra[1]'), 1fr);
+}
+.win-msg {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.win-msg::before {
+    content: "";
+    display: inline-bock;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-background);
+    opacity: 0.8
 }
 
 </style>

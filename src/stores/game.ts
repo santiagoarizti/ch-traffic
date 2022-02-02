@@ -16,6 +16,9 @@ export const useGameStore = defineStore('game', () => {
         levels.value = getStandardLevels();
     }
 
+    /** set to true when the level has been beaten */
+    const levelBeat = ref(false);
+
     const activeLevelId = ref<number|undefined>();
 
     const level = computed<GameLevel|undefined>(() => levels.value.find(l => l.id === activeLevelId.value));
@@ -43,15 +46,21 @@ export const useGameStore = defineStore('game', () => {
             carsPositions: level.value.carsPositions,
             moves: [],
         }] : undefined;
+
+        levelBeat.value = false;
     }
 
     function makeMove(move: Move) {
+        if (levelBeat.value) {
+            return; // I do't know why I bother...
+        }
+
         if (currentState.value && level.value) {
             try {
                 const newState = tryMove(level.value, currentState.value, cars, move);
                 history.value?.push(newState);
                 if (isLevelBeat(level.value, newState, cars)) {
-                    alert('You win :)');
+                    levelBeat.value = true;
                 }
             } catch (error) {
                 console.error(error);
@@ -62,6 +71,7 @@ export const useGameStore = defineStore('game', () => {
     return {
         // state
         levels,
+        levelBeat,
         // getters
         level,
         currentState,

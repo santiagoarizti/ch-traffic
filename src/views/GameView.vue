@@ -34,6 +34,6 @@ store.initStandardLevels();
 .grid-container {
     display: flex;
     justify-content: center;
-    margin: 2rem;
+    margin: 2rem 0;
 }
 </style>

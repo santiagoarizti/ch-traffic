@@ -21,7 +21,7 @@ const gridColumnStart = computed(() => props.x + 1);
 
 /** only informs the coordinate to the mouse store, not the car, that is handled elsewhere */
 function onMouseenter() {
-    mouse.reportCoordinates(props.x, props.y);
+    mouse.reportCoordinates(props.x, props.y); // see TrafficGrid.vue::onTouchmove for touch equivalent
 }
 
 function onMousedown(e: MouseEvent) {
@@ -35,10 +35,6 @@ function onTouchstart(e: TouchEvent) {
     mouse.selectHoveredCar();
 }
 
-function onTouchmove() {
-    // todo: me quedé aquí, no parece funcionar
-    mouse.reportCoordinates(props.x, props.y);
-}
 </script>
 
 <template>
@@ -47,7 +43,6 @@ function onTouchmove() {
         @mouseenter="onMouseenter"
         @mousedown="onMousedown"
         @touchstart="onTouchstart"
-        @touchmove="onTouchmove"
     >
         <span v-if="settings.showCoordinates">
             {{index}}<br>
